@@ -3,4 +3,4 @@
 	url = https://github.com/Codeception/Codeception.git
 [submodule "php-code"]
 	path = php-code
-	url = https://github.com/yiisoft/yii2-app-advanced.git
+	url = https://github.com/bscheshirwork/yii2-app-advanced-rbac.git

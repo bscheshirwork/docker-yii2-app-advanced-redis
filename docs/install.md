@@ -1,13 +1,22 @@
 
-Install [docker](https://docs.docker.com/engine/getstarted/step_one/) and [docker-compose](https://docs.docker.com/compose/install/)
-> Note: we need latest version (read instruction!) 
+Для запуска данного шаблона необходимы [docker](https://docs.docker.com/engine/getstarted/step_one/) и [docker-compose](https://docs.docker.com/compose/install/)
+> Обратите вниимание на особенности установки - apt не позволяет добыть нужные версии 
 
-1.Clone project
+Ниже приведу последовательность действий для запуска на Ubuntu
+
+1.Установить docker и docker-compose по ссылкам выше.
+
+2.Создать папку проекта 
+
 ```
-$ git clone https://github.com/bscheshirwork/docker-yii2-advanced newproject
+$ git clone https://github.com/bscheshirwork/docker-yii2-advanced-rbac newproject
 ```
 
-2.Start the `php` service
+либо вручную, если отсутствует git - из [архива](https://github.com/bscheshirwork/docker-yii2-advanced-rbac/archive/master.zip)
+В ней `[docker-compose.yml](./docker-run/docker-compose.yml)` служит для установки конфигурации Вашей будущей связки сервисов. Для дебага не забудьте изменить соответствующую переменную окружения, подставив адрес вашей машины вместо указанного для примера.
+
+3.Загрузить и запустить сервис `php`
+> Если Вы хотите запустить на одной машине несколько копий такой сборки - обратите внимани на то, чтобы папки (и соответственно префикс композиции, в примере "dockerrun_") имели разное название. Также переменные окружения для mysql необходимо дифференцировать по проектам. Несоблюдение данного правила будет приводить к ошибкам подключения к базе. 
 
 ```
 $ cd newproject/docker-run
@@ -17,50 +26,49 @@ Creating dockerrun_db_1
 root@abfe3b3ca645:/var/www/html#
 ```
 
-Inside container:
+дальнейшие команды будут выполнятся из консоли этого контейнера:
 ```
 root@abfe3b3ca645:/var/www/html#
 ```
-2.1.Run `composer update` use github token (see `https://github.com/settings/tokens`)
+
+4.Загрузить зависимости `composer` в контейнере. Обнление потребует github token (см. [установку yii2](https://github.com/yiisoft/yii2/blob/master/docs/guide-ru/start-installation.md) ), его вы можете найти на своей странице в разделе `https://github.com/settings/tokens`
 
 ```
 composer update
 ```
 
-2.2.Run yii2 init script (0 - Development) for create local settings (see [preparing-application](https://github.com/yiisoft/yii2-app-advanced/blob/master/docs/guide/start-installation.md#preparing-application) 1-3)
+5.Инициализировать шаблон скриптом, аналогично исходному [шаблону advanced](https://github.com/yiisoft/yii2-app-advanced/blob/master/docs/guide/README.md)
+
+Выберете покружение `dev` в скрипте инициализации 
 ```
 ./init
 ``` 
+что создаст настройки и скрипт `yii` для следующего шага. Настройки базы уже установлены для окружения, 
+их согласно вашим нуждам можно изменить(`docker-codeception-run/docker-compose.yml`, `docker-run/docker-compose.yml`, `php-code/common/config/main.php` - требуется root).
+> Внимание! Возникла ошибка доступа? При изменении настроек базы после её первого запуска не забываем останавливать композицию `docker-compose down` и чистить файлы базы `sudo rm -rf ../mysql-data/*`; Возникла ошибка `SQLSTATE[HY000] [2002] Connection refused` - база не успела поднятся. 
 
-2.3.Synchronize db settings (`docker-run/docker-compose.yml`, `php-code/common/config/main-local.php`; `docker-codeception-run/docker-compose.yml`, `php-code/common/config/test-local.php`)
-`php-code/common/config/main-local.php`
+В отличие от исходного шаблона, миграции необходимо выполнить для каждого из модулей 
 ```
-'db' => [
-    'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=db;dbname=yii2advanced',
-    'username' => 'yii2advanced',
-    'password' => 'yii2advanced',
-    'charset' => 'utf8',
-],
-```
-
-For test used another base, but the same named service `db` (and the same connect string)
-`php-code/common/config/test-local.php`
-```
-'db' => [
-],
+./yii migrate/up --migrationPath=@yii/rbac/migrations/
+./yii migrate/up --migrationPath=@dektrium/user/migrations
+./yii migrate/up --migrationPath=@mdm/admin/migrations
+./yii migrate/up
 ```
 
-2.4.Run migration
+При выполнении последней мигации, согласно [документации модуля](./guide/start-installation.md) вы проведёте инициализацию rbac. **Первый пользователь получит права администратора**.
+
+Создать пользователя можно тут же, командой
 ```
-./yii migrate
+./yii user/create usermail@usermailserver.com login
 ```
-> Note: error? `docker-compose down` and `sudo rm -rf ../mysql-data/*` 
+> В случае ошибки на этапе создания первого пользователя права не будут выданы. Верните базу в первоначальный вид и попробуйте снова.
 
+> email можно прочесть в папке php-code/console/runtime/mail
 
-2.4.Leave container (`exit`, ctrl+c)
+> Примечание: Для отправки почты (сообщение о регистрации, восстановление пароля, подтверждение ночты в модуле пользователей)
+необходимо настроить отправку почты, согласно соответствующему пункту [документации модуля](./guide/start-installation.md)
 
-3.Run the composition
+6.Выйти из контейнера (`exit`, ctrl+c) и запустить комплекс сервисов
 ```
 $ docker-compose up -d
 Creating network "dockerrun_default" with the default driver
@@ -69,18 +77,17 @@ Creating dockerrun_php_1
 Creating dockerrun_nginx_1
 ```
 
-4.See url `0.0.0.0:8080` - frontend, `0.0.0.0:8081` - backend
+Сервис доступен по адресу `0.0.0.0:8080` - frontend, `0.0.0.0:8081` - backend
 
-For xdebug use environment (for example your ip is 192.168.0.83)
+Для работы с xdebug используются переменные среды.
 ```
 XDEBUG_CONFIG: "remote_host=192.168.0.83 remote_port=9001"
-PHP_IDE_CONFIG: "serverName=docker-yii2-advanced"
+PHP_IDE_CONFIG: "serverName=docker-yii2-advanced-rbac"
 ```
-PHPStorm settings:
-
-Create new Service named (like PHP_IDE_CONFIG value)
-`Settings > Languages & Frameworks > PHP > Servers: [Name => docker-yii2-advanced]`
-Use path mapping:
+В PHPStorm настроить следующее:
+Добавить сервер с указанным в перемнной PHP_IDE_CONFIG именем
+`Settings > Languages & Frameworks > PHP > Servers: [Name => docker-yii2-advanced-rbac]`
+В нём изменить path mapping.
 `Settings > Languages & Frameworks > PHP > Servers: [Use path mapping => True, /home/user/petshelter/php-code => /var/www/html]`
-Change debug port 9000
+Изменить порт по умолчанию 9000 на используемый в настройках
 `Settings > Languages & Frameworks > PHP > Debug: [Debug port => 9001]`
