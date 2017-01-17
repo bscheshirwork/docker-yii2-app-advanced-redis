@@ -30,6 +30,8 @@ root@abfe3b3ca645:/var/www/html#
 ```
 root@abfe3b3ca645:/var/www/html#
 ```
+> Одиночные команды можно выполнить и без этого
+`docker-compose -f docker-run/docker-compose.yml run --rm php composer update`
 
 4.Загрузить зависимости `composer` в контейнере. Обнление потребует github token (см. [установку yii2](https://github.com/yiisoft/yii2/blob/master/docs/guide-ru/start-installation.md) ), его вы можете найти на своей странице в разделе `https://github.com/settings/tokens`
 
