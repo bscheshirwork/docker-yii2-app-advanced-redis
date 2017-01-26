@@ -6,7 +6,7 @@
 Вы можете выполнить установку готового шаблона на своё окружение с установленными и настроеными модулями с помощью команд
 ```
 composer global require "fxp/composer-asset-plugin:~1.1.1"
-composer create-project --prefer-dist bscheshirwork/yii2-advanced-rbac yii2-advanced-rbac
+composer create-project --prefer-dist bscheshirwork/yii2-app-advanced-rbac yii2-app-advanced-rbac
 ```
 и инициализации, аналогичной исходному [шаблону advanced](https://github.com/yiisoft/yii2-app-advanced/blob/master/docs/guide/README.md)
 

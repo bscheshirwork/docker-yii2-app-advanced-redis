@@ -41,7 +41,7 @@ composer update
 
 5.Инициализировать шаблон скриптом, аналогично исходному [шаблону advanced](https://github.com/yiisoft/yii2-app-advanced/blob/master/docs/guide/README.md)
 
-Выберете покружение `dev` в скрипте инициализации 
+Выберете покружение `development [0]` в скрипте инициализации 
 ```
 ./init
 ``` 
@@ -56,8 +56,26 @@ composer update
 ./yii migrate/up --migrationPath=@mdm/admin/migrations
 ./yii migrate/up
 ```
+Или так: 
+```
+for i in "--migrationPath=@yii/rbac/migrations/" "--migrationPath=@dektrium/user/migrations" "--migrationPath=@mdm/admin/migrations" ""; do ./yii migrate/up $i; done
+```
+> для того, чтобы откатить миграции необходимо их в обратном порядке перечислять (зависимость от пути не позволяет использовать короткий синтаксис)
+```
+for i in "" "--migrationPath=@mdm/admin/migrations" "--migrationPath=@dektrium/user/migrations" "--migrationPath=@yii/rbac/migrations/"; do ./yii migrate/down $i; done
+```
 
-При выполнении последней мигации, согласно [документации модуля](./guide/start-installation.md) вы проведёте инициализацию rbac. **Первый пользователь получит права администратора**.
+> Самое время создать дамп базы (например, такой метод использовался при создании используемого в тестах). При запущенном контейнере `dockerrun_db_1`
+либо `dockercodeceptionrun_db_run_1` используем согласно [документации в описании образа](https://hub.docker.com/_/mysql/)
+```
+docker exec dockerrun_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' > php-code/common/tests/_data/dump.sql
+```
+При восстановлении необходимо добавить ключ `-i` для перенаправления ввода.
+```
+docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < php-code/common/tests/_data/dump.sql
+```
+
+При выполнении последней мигации вы проведёте инициализацию rbac [см. общая инструкция установки шаблона](./guide/start-installation.md). **Первый пользователь получит права администратора**.
 
 Создать пользователя можно тут же, командой
 ```
@@ -68,7 +86,7 @@ composer update
 > email можно прочесть в папке php-code/console/runtime/mail
 
 > Примечание: Для отправки почты (сообщение о регистрации, восстановление пароля, подтверждение ночты в модуле пользователей)
-необходимо настроить отправку почты, согласно соответствующему пункту [документации модуля](./guide/start-installation.md)
+необходимо настроить отправку почты, согласно соответствующему пункту [инструкции](./guide/start-installation.md)
 
 6.Выйти из контейнера (`exit`, ctrl+c) и запустить комплекс сервисов
 ```
@@ -90,6 +108,6 @@ PHP_IDE_CONFIG: "serverName=docker-yii2-advanced-rbac"
 Добавить сервер с указанным в перемнной PHP_IDE_CONFIG именем
 `Settings > Languages & Frameworks > PHP > Servers: [Name => docker-yii2-advanced-rbac]`
 В нём изменить path mapping.
-`Settings > Languages & Frameworks > PHP > Servers: [Use path mapping => True, /home/user/petshelter/php-code => /var/www/html]`
+`Settings > Languages & Frameworks > PHP > Servers: [Use path mapping => True, /home/user/yourprojectname/php-code => /var/www/html]`
 Изменить порт по умолчанию 9000 на используемый в настройках
 `Settings > Languages & Frameworks > PHP > Debug: [Debug port => 9001]`

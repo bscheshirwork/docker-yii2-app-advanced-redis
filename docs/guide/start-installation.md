@@ -238,6 +238,15 @@ composer require "mdmsoft/yii2-admin:2.x-dev"
 ./yii migrate/up
 ```
 
+Быстрые команды для выполнения и отката миграций выглядят так: 
+```
+for i in "--migrationPath=@yii/rbac/migrations/" "--migrationPath=@dektrium/user/migrations" "--migrationPath=@mdm/admin/migrations" ""; do ./yii migrate/up $i; done
+```
+> для того, чтобы откатить миграции необходимо их в обратном порядке перечислять (зависимость от пути не позволяет использовать короткий синтаксис)
+```
+for i in "" "--migrationPath=@mdm/admin/migrations" "--migrationPath=@dektrium/user/migrations" "--migrationPath=@yii/rbac/migrations/"; do ./yii migrate/down $i; done
+```
+
 При этом вы проведёте инициализацию rbac. **Первый пользователь получит права администратора**.
 
 Создать пользователя можно тут же, командой

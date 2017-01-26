@@ -23,6 +23,8 @@ services:
   db:
     image: mysql:8.0.0
     restart: always
+    ports:
+      - "33006:3306"
     volumes:
       - ../mysql-data-test/db:/var/lib/mysql #mysql-data
     environment:
@@ -31,7 +33,7 @@ services:
       MYSQL_USER: yii2advanced
       MYSQL_PASSWORD: yii2advanced
   codecept:
-    image: bscheshir/codeception:php7.1.0-fpm-4yii2
+    image: bscheshir/codeception:php7.1.0-fpm-4yii2aar
     depends_on:
       - nginx
       - firefox
