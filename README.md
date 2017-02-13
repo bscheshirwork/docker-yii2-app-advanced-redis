@@ -9,7 +9,8 @@ docker-yii2-advanced-rbac, созданный в Docker-образоах окр�
 ДОКУМЕНТАЦИЯ
 -------------
 * [Установка](./docs/install.md)
-* [тесты](/docs/codeception.md).
+* [codeception](/docs/codeception.md).
+* [mysql-proxy](/docs/mysql-proxy.md).
 
 Информация о самом yii2-advanced-rbac 
 * [Установка и описание yii2-advanced-rbac](./docs/guide/README.md)
