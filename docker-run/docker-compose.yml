@@ -50,6 +50,7 @@ services:
       - ../mysql-proxy/log.lua:/opt/log.lua
       - ../mysql-proxy/mysql.log:/opt/mysql-proxy/mysql.log
     environment:
+      TZ: Europe/Moscow
       PROXY_DB_PORT: 3306
       REMOTE_DB_HOST: mysql
       REMOTE_DB_PORT: 3306
