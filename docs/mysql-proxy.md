@@ -49,12 +49,12 @@ services:
       - "3308:3306" #for external connection
     restart: always
     volumes: 
-      - ../mysql-proxy/main.lua:/opt/main.lua
+      - ../mysql-proxy-conf:/opt/mysql-proxy/conf
     environment:
       PROXY_DB_PORT: 3306
       REMOTE_DB_HOST: mysql
       REMOTE_DB_PORT: 3306
-      PROXY_LUA_SCRIPT: "/opt/main.lua"
+      LUA_SCRIPT: "/opt/mysql-proxy/conf/main.lua"
     depends_on:
       - mysql
 ```
@@ -74,19 +74,20 @@ end
 ```
 ...
     volumes:
-      - ../mysql-proxy/log.lua:/opt/log.lua
-      - ../mysql-proxy/mysql.log:/opt/mysql-proxy/mysql.log
+      - ../mysql-proxy-conf:/opt/mysql-proxy/conf
+      - ../mysql-proxy-logs:/opt/mysql-proxy/logs
     environment:
       PROXY_DB_PORT: 3306
       REMOTE_DB_HOST: mysql
       REMOTE_DB_PORT: 3306
-      PROXY_LUA_SCRIPT: "/opt/log.lua"
+      LUA_SCRIPT: "/opt/mysql-proxy/conf/log.lua"
+      LOG_FILE: "/opt/mysql-proxy/logs/mysql.log"
 ...
 ```
 
-`/mysql-proxy/log.lua` https://gist.github.com/simonw/1039751
+`/mysql-proxy-conf/log.lua` https://gist.github.com/simonw/1039751
 ```
-local log_file = '/opt/mysql-proxy/mysql.log'
+local log_file = os.getenv("LOG_FILE")
 
 local fh = io.open(log_file, "a+")
 
@@ -106,6 +107,25 @@ end
 https://hub.docker.com/r/zwxajh/mysql-proxy
 https://hub.docker.com/r/gediminaspuksmys/mysqlproxy/
 
+# Ротация логов
+Образ может быть расширен для ротации логов с помощью `logrotate`
+Конфиг `/etc/logrotate.d/mysql-proxy` (приблизительно)
+
+```
+/opt/mysql-proxy/mysql.log {
+	weekly
+	missingok
+	rotate 35600
+	compress
+	delaycompress
+	notifempty
+	create 666 root root 
+	postrotate
+		/etc/init.d/mysql-proxy reload > /dev/null
+	endscript
+}
+```
+
 # Что плохого может случится?
 Если у вас не получается поднять цепочку `mysql` -> `mysql-proxy` -> `external клиент слушающий 0.0.0.0:3308`
 проверьте порты у сервиса `mysql` и явно добавьте `expose` этому сервису
@@ -114,5 +134,3 @@ https://hub.docker.com/r/gediminaspuksmys/mysqlproxy/
       - "3306" #for service mysql-proxy
 ```
 
-Возможно, понадобится создать файл лога перед запуском 
- ```touch mysql-proxy/mysql.log```
