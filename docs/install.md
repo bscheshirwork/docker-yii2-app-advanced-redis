@@ -35,6 +35,11 @@ root@abfe3b3ca645:/var/www/html#
 
 4.Загрузить зависимости `composer` в контейнере. Обнление потребует github token (см. [установку yii2](https://github.com/yiisoft/yii2/blob/master/docs/guide-ru/start-installation.md) ), его вы можете найти на своей странице в разделе `https://github.com/settings/tokens`
 
+Кеш композера можно вынести из контейнера, для поддержания его в чистоте и ускорения работы новых контейнеров сервиса `php`
+```
+- ~/.composer/cache:/root/.composer/cache
+```
+
 ```
 composer update
 ```
