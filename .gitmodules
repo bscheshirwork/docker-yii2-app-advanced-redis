@@ -4,3 +4,6 @@
 [submodule "docker-codeception-run/build"]
 	path = docker-codeception-run/build
 	url = https://github.com/Codeception/Codeception.git
+[submodule "docker-run/docker-php"]
+	path = docker-run/docker-php
+	url = https://github.com/bscheshirwork/docker-php.git
