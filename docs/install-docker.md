@@ -22,7 +22,7 @@ sudo apt-get install -y --no-install-recommends \
 ```
 sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 ```
-Добавьте этот репозиторий в APT:
+Добавьте этот репозиторий в APT (для Ubuntu 16.04 (Xenial Xerus)):
 ```
 echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | sudo tee /etc/apt/sources.list.d/docker.list
 ```
@@ -94,3 +94,27 @@ sudo usermod -aG docker $(whoami)
 ```
 sudo usermod -aG docker username
 ```
+
+# 3: Установка docker-compose
+
+Перейдите на страницу проекта на [GitHub](https://github.com/docker/compose/releases)
+
+Следуйте инструкциям по установке в описании релиза. 
+Например, для версии 1.1.12 (от `superuser`)
+
+```
+sudo -i
+curl -L "https://github.com/docker/compose/releases/download/1.11.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+exit;
+```
+
+Проверить версию можно так
+```
+$ docker-compose --version
+
+docker-compose version: 1.11.2
+```
+
+> Примечание: в конфигурации `cron`, `systemctl` и т.п. необходимо указываеть полные пути к исполнимому файлу, т.е. 
+`/usr/local/bin/docker-compose`
