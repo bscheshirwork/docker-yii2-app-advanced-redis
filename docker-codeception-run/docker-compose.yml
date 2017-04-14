@@ -23,7 +23,7 @@ services:
       - ../nginx-conf:/etc/nginx/conf.d #nginx-conf
       - ../nginx-logs:/var/log/nginx #nginx-logs
   db:
-    image: mysql:8.0.0
+    image: mysql:8.0.1
     restart: always
     ports:
       - "33006:3306"
