@@ -48,6 +48,8 @@ services:
       - ~/.composer/cache:/root/.composer/cache
   chrome:
     image: selenium/standalone-chrome-debug:3.3.1
+    volumes:
+      - /dev/shm:/dev/shm # the docker run instance may use the default 64MB, that may not be enough in some cases
     ports:
       - '4444'
       - '5900'
