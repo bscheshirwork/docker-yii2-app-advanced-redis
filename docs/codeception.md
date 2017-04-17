@@ -1,5 +1,4 @@
-
-##Заметки по тестированию.
+## Codeception: заметки о тестировании в docker.
 
 Первое - подготовить `Codeception` для тестирования этого проекта.
 Взяв за основу `codeception/codeception`, создадим образ для запуска тестов с установленными дополнительными модулями.
@@ -10,12 +9,14 @@ git submodule add https://github.com/Codeception/Codeception.git build
 cd build
 git checkout 2.2 
 cp ../Dockerfile ../composer.json ./ 
-docker build -t bscheshir/codeception:php7.1.0-fpm-4yii2aar .
+docker build --no-cache -t bscheshir/codeception:php7.1.3-fpm-4yii2aar .
+docker push bscheshir/codeception:php7.1.3-fpm-4yii2aar
+git checkout -- .
 ```
 
-Замена базы
+Замена базы - наследование от `php` (НЕ `alpine`) образа, расширеного необходимыми модулями. 
 ```
-sed -i -e "s/^FROM.*/FROM bscheshir\/php:7.0.13-fpm-4yii2/" Dockerfile
+sed -i -e "s/^FROM.*/FROM bscheshir\/php:7.1.3-fpm-4yii2/" Dockerfile
 ```
 Также данная сборка будет разрешать зависимости
 `composer.json`
@@ -30,7 +31,7 @@ sed -i -e "s/^FROM.*/FROM bscheshir\/php:7.0.13-fpm-4yii2/" Dockerfile
 Использовать бинд на папку `tests`.
 ```
   codecept:
-    image: bscheshir/codeception:7.0.13-fpm-4yii2
+    image: bscheshir/codeception:7.1.3-fpm-4yii2
     depends_on:
       - php
     environment:
@@ -40,10 +41,10 @@ sed -i -e "s/^FROM.*/FROM bscheshir\/php:7.0.13-fpm-4yii2/" Dockerfile
       - ../php-code/tests:/project
 ```
 
-Запускать сервис `codecept`, следовать [инструкциям](/php-code/tests/README.md)
+Запускать сервис `codecept`, выполнить тесты из папок backend frontend console
 ```
-~/projects/petshelter/docker-codeception-run$ docker-compose run --rm --entrypoint bash codecept
-root@e870b32bc227:/project# cd tests/
+/usr/local/bin/docker-compose -i /home/dev/projects/yii2advanced/docker-codeception-run/docker-compose.yml run --rm --entrypoint bash codecept
+root@e870b32bc227:/project# cd frontend/; codecept run acceptance HomeCest
 ```
 
 Для использования плюшек автодополнения и, главное, чтобы IDE не ругалась на неизвестные классы, от которых
