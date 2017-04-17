@@ -213,27 +213,6 @@ for i in "--migrationPath=@yii/rbac/migrations/" "--migrationPath=@dektrium/user
 ./yii user/create usermail@usermailserver.com login
 ```
 
-# Использование mysqldump через ssh и docker
-
-Для создания дампа на сервере
-```
-docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' > ~/dump.sql
-```
-
-При восстановлении необходимо добавить ключ `-i` для перенаправления ввода.
-```
-docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < ~/dump.sql
-```
-
-Для создания дампа с передачей вывода на локальную машину. Запускать, соответственно, с клиента.
-```
-ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'" > ~/dump.sql
-```
-Восстановить дамп с локальной машины.
-```
-ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'" < ~/dump.sql
-```
-
 ## MySQL dump и архивирование
 Общие сведения
 
@@ -258,9 +237,40 @@ gunzip < /path/to/outputfile.sql.gz | mysql -u USER -pPASSWORD DATABASE
 zcat /path/to/outputfile.sql.gz | mysql -u USER -pPASSWORD DATABASE
 ```
 
-Применение (полный путь к дампу, запуск с клиентской машины)
+## Использование mysqldump через ssh и docker
+
+Для создания дампа на сервере
+```
+docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' > ~/dump.sql
+```
+
+При восстановлении необходимо добавить ключ `-i` для перенаправления ввода.
+```
+docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < ~/dump.sql
+```
+
+Для создания дампа с передачей вывода на локальную машину. Запускать, соответственно, с клиента.
+```
+ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'" > ~/dump.sql
+```
+Восстановить дамп с локальной машины.
+```
+ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'" < ~/dump.sql
+```
+
+### Применение 
+Создание дампа и архивирование (полный путь к дампу, запуск с клиентской машины)
 ```
 ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced' | gzip" > `date +/home/dev/dump.sql.%Y%m%d.%H%M%S.gz`
+```
+Восстановление из архива (полный путь к архиву)
+```
+zcat /home/dev/dump/1/dump.sql.date.time.gz | docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced'
+```
+
+Восстановление из архива (полный путь к архиву, запуск с клиентской машины)
+```
+zcat /home/dev/dump/1/dump.sql.date.time.gz | ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'"
 ```
 
 ## Скрипт с ротацией дампов
