@@ -243,10 +243,18 @@ zcat /path/to/outputfile.sql.gz | mysql -u USER -pPASSWORD DATABASE
 ```
 docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' > ~/dump.sql
 ```
+Используя `docker-compose`
+```
+/usr/local/bin/docker-compose -i /home/dev/projects/yii2advanced/docker-compose.yml run --rm db sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' > ~/dump.sql
+```
 
 При восстановлении необходимо добавить ключ `-i` для перенаправления ввода.
 ```
 docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < ~/dump.sql
+```
+Используя `docker-compose`
+```
+/usr/local/bin/docker-compose -i /home/dev/projects/yii2advanced/docker-compose.yml run --rm db sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < ~/dump.sql
 ```
 
 Для создания дампа с передачей вывода на локальную машину. Запускать, соответственно, с клиента.
