@@ -2,50 +2,8 @@
 
 Первое - подготовить `Codeception` для тестирования этого проекта.
 Взяв за основу `codeception/codeception`, создадим образ для запуска тестов с установленными дополнительными модулями.
-(доступен из докерхаба, описание создания)
-```
-cd docker-codeception-run
-git submodule add https://github.com/Codeception/Codeception.git build
-cd build
-git checkout 2.2 
-cp ../Dockerfile ../composer.json ./ 
-docker build --no-cache -t bscheshir/codeception:php7.1.3-fpm-4yii2aar .
-docker push bscheshir/codeception:php7.1.3-fpm-4yii2aar
-git checkout -- .
-```
 
-Замена базы - наследование от `php` (НЕ `alpine`) образа, расширеного необходимыми модулями. 
-```
-sed -i -e "s/^FROM.*/FROM bscheshir\/php:7.1.3-fpm-4yii2/" Dockerfile
-```
-Также данная сборка будет разрешать зависимости
-`composer.json`
-```
-    "require": {
-...
-        "codeception/specify": "*",
-        "codeception/verify": "*"
-    }
-```
-
-Использовать бинд на папку `tests`.
-```
-  codecept:
-    image: bscheshir/codeception:7.1.3-fpm-4yii2
-    depends_on:
-      - php
-    environment:
-      XDEBUG_CONFIG: "remote_host=192.168.88.241 remote_port=9008 remote_enable=On"
-      PHP_IDE_CONFIG: "serverName=codeception"
-    volumes:
-      - ../php-code/tests:/project
-```
-
-Запускать сервис `codecept`, выполнить тесты из папок backend frontend console
-```
-/usr/local/bin/docker-compose -i /home/dev/projects/yii2advanced/docker-codeception-run/docker-compose.yml run --rm --entrypoint bash codecept
-root@e870b32bc227:/project# cd frontend/; codecept run acceptance HomeCest
-```
+[bscheshir/codeception:php-fpm-yii2](https://github.com/bscheshirwork/docker-codeception-yii2)
 
 Для использования плюшек автодополнения и, главное, чтобы IDE не ругалась на неизвестные классы, от которых
 наследуется актёр, можно извлечь из образа исходный код фреймворка тестирования и зависимостей.
