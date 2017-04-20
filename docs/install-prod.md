@@ -281,6 +281,14 @@ zcat /home/dev/dump/1/dump.sql.date.time.gz | docker exec -i yii2advanced_db_1 s
 zcat /home/dev/dump/1/dump.sql.date.time.gz | ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'"
 ```
 
+Интерактивная консоль MySQL
+```
+docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced'
+```
+```
+ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'
+```
+
 ## Скрипт с ротацией дампов
 
 ```
