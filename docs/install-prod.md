@@ -201,11 +201,11 @@ for i in backend common console frontend; do for j in "main-local.php" "params-l
 
 После исправления можно использовать для следующих установок/восстановления - создав копию
 ```
-for i in backend common console frontend; do for j in main-local.php param-local.php test-local.php; do mkdir -p /home/dev/projects/yii2advanced_config/php-code/$i/config; cp -p /home/dev/projects/yii2advanced/php-code/$i/config/$j /home/dev/projects/yii2advanced_config/php-code/$i/config/$j; done; done;
+for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do mkdir -p /home/dev/projects/yii2advanced_config/php-code/$i/config; cp -p /home/dev/projects/yii2advanced/php-code/$i/config/$j /home/dev/projects/yii2advanced_config/php-code/$i/config/$j; done; done;
 ```
 Восстановление, соответственно, обратное
 ```
-for i in backend common console frontend; do for j in main-local.php param-local.php test-local.php; do cp -p /home/dev/projects/yii2advanced_config/php-code/$i/config/$j /home/dev/projects/yii2advanced/php-code/$i/config/$j; done; done;
+for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do cp -p /home/dev/projects/yii2advanced_config/php-code/$i/config/$j /home/dev/projects/yii2advanced/php-code/$i/config/$j; done; done;
 ```
 
 12.Выполнить миграции внутри контейнера / загрузить `dump`.
