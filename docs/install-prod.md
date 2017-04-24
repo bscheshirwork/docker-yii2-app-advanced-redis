@@ -292,7 +292,7 @@ zcat /home/dev/dump/1/dump.sql.date.time.gz | ssh vpsserver-remoteuser "docker e
 
 Интерактивная консоль MySQL
 ```
-docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced'
+docker exec -ti yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced'
 ```
 ```
 ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'
@@ -501,4 +501,4 @@ server {
 /usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-run/docker-compose.yml run --rm php ./yii cache/flush-all
 ```
 
-# Возможные проблемы [см. troubleshooting](./install-troubleshooting.md.md)
+# Возможные проблемы [см. troubleshooting](./install-troubleshooting.md)
