@@ -250,35 +250,61 @@ zcat /path/to/outputfile.sql.gz | mysql -u USER -pPASSWORD DATABASE
 
 Для создания дампа на сервере
 ```
-docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' > ~/dump.sql
+docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced 2>/dev/null' > ~/dump.sql
 ```
+> ! Обязательное подавление предупреждения `[Warning] Using a password on the command line interface can be insecure.` для исключения оного из дампа.
+> ! `docker-compose run` не работает после установки кодировки как параметров в точке входа. 
+
 Используя `docker-compose`
 ```
-/usr/local/bin/docker-compose -i /home/dev/projects/yii2advanced/docker-compose.yml run --rm db sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' > ~/dump.sql
+/usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-compose.yml exec db sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced 2>/dev/null'>~/dump.sql
 ```
 
 При восстановлении необходимо добавить ключ `-i` для перенаправления ввода.
 ```
 docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < ~/dump.sql
 ```
-Используя `docker-compose`
-```
-/usr/local/bin/docker-compose -i /home/dev/projects/yii2advanced/docker-compose.yml run --rm db sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < ~/dump.sql
-```
+
+> ! `docker-compose` не позволяет работать с отключенным выводом и включённым вводом. Но включённый вывод даёт баг [https://github.com/docker/compose/issues/3352]
+> ! `docker-compose run` не работает после установки кодировки как параметров в точке входа. 
 
 Для создания дампа с передачей вывода на локальную машину. Запускать, соответственно, с клиента.
 ```
-ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'" > ~/dump.sql
+ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced 2>/dev/null'" > ~/dump.sql
 ```
 Восстановить дамп с локальной машины.
 ```
 ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'" < ~/dump.sql
 ```
 
+### docker MySQL update :arrow_up:
+Пример для запущенного на разработке при обновлении версии движка базы.
+Остановить композицию, Удалить файлы мускула, запустить новую версию, после чего развернуть дампы
+1. 
+```
+/usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-run/docker-compose.yml exec mysql sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/dump.sql
+```
+2. 
+```
+docker-compose -f /home/dev/projects/yii2advanced/docker-run/docker-compose.yml down && sudo rm -rf /home/dev/projects/yii2advanced/mysql-data/* /home/dev/projects/yii2advanced/mysql-data-test/* && docker-compose -f /home/dev/projects/yii2advanced/docker-run/docker-compose.yml up -d
+```
+3. 
+```
+time -p docker exec -i dockerrun_mysql_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD"' < ~/dump.sql
+```
+также, для надёжности можно сохранить файлы баз до окончания переезда:
+1.5.
+```
+sudo mv /home/dev/projects/yii2advanced/mysql-data /home/dev/projects/yii2advanced/mysql-data-test /home/dev/projects/yii2advanced/mysql-bak/
+``` 
+```
+sudo cp -rf /home/dev/projects/yii2advanced/mysql-bak/* /home/dev/projects/yii2advanced
+```
+
 ### Применение 
 Создание дампа и архивирование (полный путь к дампу, запуск с клиентской машины)
 ```
-ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced' | gzip" > `date +/home/dev/dump.sql.%Y%m%d.%H%M%S.gz`
+ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced 2>/dev/null' | gzip" > `date +/home/dev/dump.sql.%Y%m%d.%H%M%S.gz`
 ```
 Восстановление из архива (полный путь к архиву)
 ```
@@ -321,7 +347,7 @@ do
 done
 echo "start dump job"
 mkdir -p $BACKUP_DIR/1
-time docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' | gzip > `date +$BACKUP_DIR/1/dump.sql.%Y%m%d.%H%M%S.gz`
+time docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced 2>/dev/null' | gzip > `date +$BACKUP_DIR/1/dump.sql.%Y%m%d.%H%M%S.gz`
 ls -lAh $BACKUP_DIR/1
 ```
 
