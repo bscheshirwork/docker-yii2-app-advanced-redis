@@ -18,6 +18,9 @@ Thumbs.db
 # nginx logs dir
 /nginx-logs
 
+# supervisor logs dir
+/supervisor-logs
+
 # mysql data dir
 /mysql-data
 # mysql test data dir

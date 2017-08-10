@@ -19,7 +19,7 @@ url = https://github.com/bscheshirwork/docker-yii2-app-advanced-rbac.git
 |     path = docker-run/docker-php
 |     url = https://github.com/bscheshirwork/docker-php.git
 |
-|---- yii2-app-advanced-rbac
+|---- yii2-app-advanced-redis
       path = php-code
       url = https://github.com/bscheshirwork/yii2-app-advanced-rbac.git
 ```
@@ -30,6 +30,9 @@ url = https://github.com/bscheshirwork/docker-yii2-app-advanced-rbac.git
 Соответствущие цепочки для окружения приложения `docker` и подмодуля с кодом приложения `php-code`
 
 ```
+docker-yii2-app-advanced-redis
+url = https://github.com/bscheshirwork/docker-yii2-app-advanced-redis.git
+⇑
 docker-yii2-app-advanced-rbac
 url = https://github.com/bscheshirwork/docker-yii2-app-advanced-rbac.git
 ⇑
@@ -38,6 +41,9 @@ url = https://github.com/bscheshirwork/docker-yii2-app-advanced.git
 ```
 
 ```
+yii2-app-advanced-redis
+url = https://github.com/bscheshirwork/yii2-app-advanced-redis.git
+⇑
 yii2-app-advanced-rbac
 url = https://github.com/bscheshirwork/yii2-app-advanced-rbac.git
 ⇑

@@ -11,6 +11,25 @@ services:
     environment:
       TZ: Europe/Moscow
       XDEBUG_CONFIG: "remote_enable=Off remote_autostart=Off"
+  php-supervisor: # for workers
+    image: bscheshir/php:7.1.8-fpm-alpine-4yii2-supervisor
+    restart: always
+    volumes:
+      - ./php-code:/var/www/html #php-code
+      - ./supervisor-conf:/etc/supervisor/conf.d
+      - ./supervisor-logs:/var/log/supervisor
+    depends_on:
+      - db
+    environment:
+      TZ: Europe/Moscow
+      XDEBUG_CONFIG: "remote_enable=Off remote_autostart=Off"
+  redis:
+    image: redis:4.0.1-alpine
+    command: redis-server --requirepass yii2advancedredis
+    ports:
+      - "6379"
+    depends_on:
+      - php-supervisor
   nginx:
     image: nginx:1.13.3-alpine
     restart: always
