@@ -63,3 +63,18 @@ url = https://github.com/yiisoft/yii2-app-advanced.git
 
 Добавив репозитории предков под псевдонимом `parent` либо обращаясь напрямую по адресу, можно сделать `pull` изначального кода.
 Доступно как по цепочке (если есть доступ), так и последовательно, над каждым предком, из верхнеуровнего.
+
+Например, после обновления версии продукта окружения
+
+```sh
+cd ./docker-run/docker-php
+git pull origin master
+cd ../..
+cd ./docker-codeception-run/docker-codeception-yii2
+git pull origin master
+cd ../..
+cd ./php-code
+git pull parent master
+cd ..
+sed -i -e 's/\(php:\?\)7.1.7/\17.1.8/;s/nginx:1.13.2/nginx:1.13.3/' ./docker-compose.yml ./docker-run/docker-compose.yml ./docker-codeception-run/docker-compose.yml
+```
