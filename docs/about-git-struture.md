@@ -77,4 +77,24 @@ cd ./php-code
 git pull parent master
 cd ..
 sed -i -e 's/\(php:\?\)7.1.7/\17.1.8/;s/nginx:1.13.2/nginx:1.13.3/' ./docker-compose.yml ./docker-run/docker-compose.yml ./docker-codeception-run/docker-compose.yml
+git status
 ```
+
+После завершения слияния коммит и во внешний репозиторий.
+
+И для последующих
+```
+cd ./docker-run/docker-php
+git pull origin master
+cd ../..
+cd ./docker-codeception-run/docker-codeception-yii2
+git pull origin master
+cd ../..
+cd ./php-code
+git pull parent master
+cd ..
+git pull parent master
+git status
+```
+
+и т.п.
