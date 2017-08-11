@@ -25,6 +25,7 @@ services:
       XDEBUG_CONFIG: "remote_enable=Off remote_autostart=Off"
   redis:
     image: redis:4.0.1-alpine
+    restart: always
     command: redis-server /etc/redis/conf.d/redis.conf --requirepass yii2advancedredis
     ports:
       - "6379"
