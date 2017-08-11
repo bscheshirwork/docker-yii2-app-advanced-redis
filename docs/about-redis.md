@@ -11,6 +11,8 @@
     command: redis-server --requirepass yii2advancedredis
     ports:
       - "6379"
+    volumes:
+      - ../redis-data:/data
     depends_on:
       - php-supervisor
 ```
