@@ -27,11 +27,12 @@ services:
       PHP_IDE_CONFIG: "serverName=yii2advanced"
   redis:
     image: redis:4.0.1-alpine
-    command: redis-server --requirepass yii2advancedredis
+    command: redis-server /etc/redis/conf.d/redis.conf --requirepass yii2advancedredis
     ports:
       - "6379"
     volumes:
       - ../redis-data:/data
+      - ../redis-conf:/etc/redis/conf.d
     depends_on:
       - php-supervisor
   nginx:

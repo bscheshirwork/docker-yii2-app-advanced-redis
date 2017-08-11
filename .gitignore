@@ -21,6 +21,9 @@ Thumbs.db
 # supervisor logs dir
 /supervisor-logs
 
+# redis data dir
+/redis-data
+
 # mysql data dir
 /mysql-data
 # mysql test data dir
