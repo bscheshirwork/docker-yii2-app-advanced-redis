@@ -11,7 +11,7 @@ docker-yii2-advanced-redis, созданный в Docker-образоах окр
 - образа php для yii2 с xdebug и supervisor'ом
 - образа хранилища redis
 - базы mysql
-- инструментов логгирования запросов на основе mysql-proxy
+- инструментов логирования запросов на основе mysql-proxy
 - тестов codeception на основе образа php для yii2
 - браузера для выполнения приёмочных тестов selenium chrome (заменяем на firefox и проч.)
 
