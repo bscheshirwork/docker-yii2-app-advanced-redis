@@ -38,10 +38,32 @@ return [
 
 Документация о очередях доступна в [руководстве](https://github.com/yiisoft/yii2-queue/blob/master/docs/guide-ru/README.md)
 
-Постановка заданий в очередь возможна от любого приложения, обработка происходит в специально сконфигурированном контейнере,
-консольными командами. Соответственно, большая часть настройки приходится на конфиг консольного, соответственно, приложения.
+Постановка заданий в очередь возможна от любого приложения, обработка происходит в специально сконфигурированном отдельном 
+контейнере, консольными командами. Соответственно, большая часть настроек приходится на конфиг консольного, соответственно, приложения.
+
+В простейшем случае воркеры обрабатывают задания, представленные в этом же проекте.  
+Например, `php-code/common/components/queue/DownloadJob.php`
+```
+<?php
+
+namespace components\queue;
+
+use yii\base\Object;
+
+class DownloadJob extends Object implements \yii\queue\Job
+{
+    public $url;
+    public $file;
+
+    public function execute($queue)
+    {
+        file_put_contents($this->file, file_get_contents($this->url));
+    }
+}
+```
+будет сохранять загрузки в пределах контейнера `run_php-supervisor_1` (при запуске композиции из `docker-run/docker-compose.yml`)
 
 Управление запуском воркеров происходит с помощью [supervisor](./about-supervisor.md) в контейнере на основе 
 `bscheshirwork/yii2-alpine-supervisor[-xdebug]`
 
-> Note: Компонент предостваляет инструмент для создания заданий в gii
+> Note: Компонент [yiisoft/yii2-queue](https://github.com/yiisoft/yii2-queue) предостваляет инструмент для создания заданий в gii
