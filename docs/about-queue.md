@@ -67,3 +67,8 @@ class DownloadJob extends Object implements \yii\queue\Job
 `bscheshirwork/yii2-alpine-supervisor[-xdebug]`
 
 > Note: Компонент [yiisoft/yii2-queue](https://github.com/yiisoft/yii2-queue) предостваляет инструмент для создания заданий в gii
+
+Посмотреть статистику по работе очереди можно с помощью консольной команды `queue/info` из контейнера `php` либо `php-supervisor`
+```
+docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml exec php-supervisor ./yii queue/info
+```
