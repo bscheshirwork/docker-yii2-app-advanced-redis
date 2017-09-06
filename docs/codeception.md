@@ -1,3 +1,5 @@
+# Codeception и тестирование шаблонов yii2
+
 ## Codeception: заметки о тестировании в docker.
 
 Первое - подготовить `Codeception` для тестирования этого проекта.
@@ -38,3 +40,55 @@ if ((ip2long(@$_SERVER['REMOTE_ADDR']) ^ ip2long(@$_SERVER['SERVER_ADDR'])) >= 2
 }
 
 ```
+
+## Codeception и Docker-инструменты PHPStorm
+
+Вдохновившись [заметкой про использоване PHPUnit](https://blog.jetbrains.com/phpstorm/2016/11/docker-remote-interpreters/)  
+И написав про [тестирование для модулей yii2](https://github.com/bscheshirwork/yii2-cubs/blob/master/docs/tests.md)  
+Решил проверить как обстоят дела с `Codeception` в данной IDE.
+
+Делаем всё по аналогии: 
+
+1. Создать интерпретатор на основании композиции докера, выбрав в настройках (File->Settings...)
+`Languages & Frameworks`, главную ветку `PHP` (не раворачивая), на этой странице кликните кнопку […] после выпадающего списка `CLI interpreter`.
+После чего нажмите зелёный плюс [+] и выбирать удалённый (From Docker, Vagrat, VM, Remote).
+![default](https://user-images.githubusercontent.com/5769211/30068126-77120edc-9265-11e7-9c47-3f3e5bd165a8.png)
+
+На данной странице следует выберать `Docker-compose` и файл композиции для `Codeception` (не тот, что стоит по умолчанию)
+`./docker-codeception-run/docker-compose.yml` - также используя меню [...] и сделав его единственной строчкой 
+с помощью соответствующих инструментов [+][-]  
+Сервис, который нас интересует, это `codecept`.
+Примерное состояние настроек после применения перечисленного: 
+![default](https://user-images.githubusercontent.com/5769211/30067959-0396fd50-9265-11e7-95e7-5b9f3478af74.png)
+После подтверждения всех изменений данного шага переходим к следующему.
+
+2. Далее в опциях (File->Settings...) находим фреймворки тестирования `Languages & Frameworks`, `PHP` ветка `Test Frameworks`  
+В ней добавляем `Codeception by remote interpreter`, используя кнопку зелёного плюса [+] и выпадающее меню.  
+![default](https://user-images.githubusercontent.com/5769211/30068224-c56cd97c-9265-11e7-99e0-ebcbc6ce8bb8.png)
+Указываем тип, созданный в предыдущем пункте:
+![default](https://user-images.githubusercontent.com/5769211/30068420-754b0012-9266-11e7-8306-5bc55059fcda.png)
+Важно! Указываем путь ВНУТРИ контейнера к тому месту, где находится исполнимый файл `codecept`. Для используемого образа
+этот путь равен `/repo/codecept`. Убежаемся в этом, нажав кнопку со стрелочками после строки ввода.
+
+Применяем изменения и возвращаемся в главное окно IDE.
+
+3. Настройка запуска осуществляется через меню (Run->Edit configurations...)    
+Вы можете добавить новую конфигурацию используя кнопку плюс [+] и выбрав `Codeception`.  
+![default](https://user-images.githubusercontent.com/5769211/30068644-0df9537c-9267-11e7-8cb1-1f44cad625fc.png)
+
+В данном меню выберем необходимый нам файл конфигурации для запуска тестов - используя файл настроек. 
+Выберем использование альтернативного файла конфигурации соответствующей галочкой и укажем путь к главному файлу настроек `Codeception`.
+В данном меню выбор происходит относительно машины разработчика, не относительно контейнера. 
+
+![default](https://user-images.githubusercontent.com/5769211/30068872-bf24d996-9267-11e7-8072-a76c1cb64ec1.png)
+
+Применяем изменения и возвращаемся в главное окно IDE.
+
+4. Опционально: если приложение на шаблоне `yii2-advanced` не было запущено в `docker-compose`, неоходимо загрузить 
+зависимости, инициализировать и настроить приложение как `Development`, [см.установку](install.md)  
+`docker-compose -f docker-codeception-run/docker-compose.yml run --rm php composer update`  
+`docker-compose -f docker-codeception-run/docker-compose.yml run --rm php ./init`
+
+5. Запустить тесты с этого момента можно с помощью соответствующей кнопки с зелёным треугольником. Поздравляю!  
+Вот только прибератся после этого придётся вручную - зависимости сервисов тянут и оставляют запущенные контейнеры.  
+`docker-compose -f docker-codeception-run/docker-compose.yml down`
