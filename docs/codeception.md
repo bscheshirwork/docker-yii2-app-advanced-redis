@@ -30,7 +30,7 @@ docker cp .codecept/src/Codeception/Lib/Connector/Yii2.php dockercodeceptionrun_
 docker cp .codecept/src/Codeception/Module/Yii2.php dockercodeceptionrun_codecept_run_1:/repo/src/Codeception/Module/Yii2.php
 ```
 
-
+## Тонкая настройка окружения и точечные изменения
 Для возможности запуска `selenium` из той же сети, созданной `docker` - в созданных командой `init` локальных точках входа тестов 
  `php-code/backend/web/index-test.php`, `php-code/frontend/web/index-test.php` нужно изменить проверку `IP`
 ```
@@ -38,7 +38,32 @@ docker cp .codecept/src/Codeception/Module/Yii2.php dockercodeceptionrun_codecep
 if ((ip2long(@$_SERVER['REMOTE_ADDR']) ^ ip2long(@$_SERVER['SERVER_ADDR'])) >= 2 ** 16) {
     die('You are not allowed to access this file.');
 }
+```
 
+Также изменен принцип подключения к тестовой базе - используется одинаковое имя базы, но при подключении сервис `db`
+будет переключён на другую дирректорию `mysql-data-test` - следовательно в настройках переопределение подключения избыточно.
+`common/config/test-local.php`
+```
+    [
+        'components' => [
+            'db' => [
+                // Uncomment this line if your run Codeception test without Docker
+                // 'dsn' => 'mysql:host=localhost;dbname=yii2advanced_test',
+            ]
+        ],
+    ]
+```
+
+Для тестирования отправки почты необходимы права на запись в `/var/www/html/[backend|frontend]/runtime/mail/` из контейнера.
+Т.е `chmod o+rwx ./php-code/backend/runtime/mail`, `chmod o+rwx ./php-code/frontend/runtime/mail`
+
+Важен порядок подключения модулей `Codeception`: `DbYii2Config` c `populate/cleanup` ранее `Yii2`
+```yml
+        - \bscheshirwork\Codeception\Module\DbYii2Config:
+            dump: ../common/tests/_data/dump.sql #relative path from "codeception.yml"
+            populate: true
+            cleanup: true
+        - Yii2
 ```
 
 ## Codeception и Docker-инструменты PHPStorm
@@ -92,3 +117,5 @@ if ((ip2long(@$_SERVER['REMOTE_ADDR']) ^ ip2long(@$_SERVER['SERVER_ADDR'])) >= 2
 5. Запустить тесты с этого момента можно с помощью соответствующей кнопки с зелёным треугольником. Поздравляю!  
 Вот только прибератся после этого придётся вручную - зависимости сервисов тянут и оставляют запущенные контейнеры.  
 `docker-compose -f docker-codeception-run/docker-compose.yml down`
+Отладку тестов, по прежнему, лучше использовать запуская из командной строки - карта не сделана на созданный `PHPstorm`ом 
+контейнер. Останов первой строки происходит на скрипте `codeception.php`
