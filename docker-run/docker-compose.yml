@@ -37,7 +37,7 @@ services:
     depends_on:
       - php-supervisor
   nginx:
-    image: nginx:1.13.3-alpine
+    image: nginx:1.13.5-alpine
     restart: always
     ports:
       - "8080:80"
