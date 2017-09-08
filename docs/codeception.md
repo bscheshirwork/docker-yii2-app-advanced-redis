@@ -134,8 +134,7 @@ for i in frontend backend; do sudo rm php-code/$i/tests/_output/$i.tests.* php-c
 
 ### Отличия запуска в IDE от запуска в контейнере из командной строки
 
-Внимание! В этом разделе указаны текущие проблемы тестирования. До решения их командой jetbrain я не могу рекомендовать 
-пользоватся вышеописаным способом :sad:
+Внимание! В этом разделе указаны текущие проблемы тестирования и заплатка.
 
 Всё отлично, казалось бы, и должно быть одинаково - но нет. Тесты, завершающиеся успехом при запуске контейнера `codecept` 
 из командной строки
@@ -173,61 +172,74 @@ docker cp phpstorm_helpers_PS-172.4155.25:/opt/.phpstorm_helpers/ .phpstorm_help
 
 Реультатом поиска и отладки стал неутешительный вывод - реализация `codeception.php` На данный момент сломана.
 
-Используя подмену $out на STDOUT и обратно, удалось провести через тесты, но это не выход.
-
-тут переопределить во время выполнения
-[.codecept/vendor/phpunit/phpunit/src/Util/Printer.php:40](https://github.com/sebastianbergmann/phpunit/blob/e6e7085fbbd2e25f4ca128ac30c1b0d3dd4ef827/src/Util/Printer.php#L43-L68)
-```
-    public function __construct($out = null)
-    {
-        if ($out !== null) {
-            if (is_string($out)) {
-                if (strpos($out, 'socket://') === 0) {
-                    $out = explode(':', str_replace('socket://', '', $out));
-
-                    if (count($out) != 2) {
-                        throw new PHPUnit_Framework_Exception;
-                    }
-
-                    $this->out = fsockopen($out[0], $out[1]);
-                } else {
-                    if (strpos($out, 'php://') === false &&
-                        !is_dir(dirname($out))) {
-                        mkdir(dirname($out), 0777, true);
-                    }
-
-                    $this->out = fopen($out, 'wt');
-                }
-
-                $this->outTarget = $out;
-            } else {
-                $this->out = $out;
-            }
-        }
+Переопределив в данном файле класс 
+```php
+...
+/**
+ * For avoid set headers before session start
+ * Class PhpStorm_Codeception_ReportPrinter_Redefine
+ */
+class PhpStorm_Codeception_ReportPrinter_Redefine extends PHPUnit_TextUI_ResultPrinter
+{
+    /**
+     * @inheritDoc
+     */
+    public function __construct(
+        $out = null,
+        $verbose = false,
+        $colors = self::COLOR_DEFAULT,
+        $debug = false,
+        $numberOfColumns = 80,
+        $reverse = false
+    ) {
+        parent::__construct(STDOUT, $verbose, $colors, $debug, $numberOfColumns, $reverse);
     }
-```
-а тут не закрывать
-[.codecept/vendor/phpunit/phpunit/src/Util/Printer.php:71](https://github.com/sebastianbergmann/phpunit/blob/e6e7085fbbd2e25f4ca128ac30c1b0d3dd4ef827/src/Util/Printer.php#L73-L78)
-```
+
+    /**
+     * Flush buffer and close output if it's not to a STDOUT stream
+     */
     public function flush()
     {
-        if ($this->out && \strncmp($this->outTarget, 'php://', 6) !== 0) {
-            \fclose($this->out);
+        if ($this->out != STDOUT) {
+            parent::flush();
         }
     }
+}
+
+class PhpStorm_Codeception_ReportPrinter extends PhpStorm_Codeception_ReportPrinter_Redefine
+{
+...
 ```
 
-Результат таких издевательств:
+и удалив все старые контейнеры, которые могли закешировать его реализацию 
+(я говорю о тебе, Reflection в Codeception), можно в папке `.phpstorm_helpers` запустить билд образа.
 ```
-docker-compose://[/home/dev/projects/docker-yii2-app-advanced-rbac/docker-codeception-run/docker-compose.yml]:codecept/php /opt/.phpstorm_helpers/codeception.php run --report -o "reporters: report: PhpStorm_Codeception_ReportPrinter" --no-ansi --no-interaction functional ConfirmationCest -vvv -c /project/frontend/codeception.yml
-Testing started at 17:33 ...
+docker build -t phpstorm_helpers:PS-172.4155.25 .
+```
+
+Дальнейший запуск тестов пройдёт успешно. До следующего обновления.  
+`531 tests done - 1m 18s 6900ms`  
+```sh
+Testing started at 12:56 ...
 Codeception PHP Testing Framework v2.3.5
 Powered by PHPUnit 5.7.21 by Sebastian Bergmann and contributors.
 
 
-Time: 2.83 minutes, Memory: 16.00MB
+[common\tests]: tests from /project/common
 
-OK (1 test, 3 assertions)
+
+
+[frontend\tests]: tests from /project/frontend
+
+
+
+[backend\tests]: tests from /project/backend
+
+
+
+Time: 1.57 minutes, Memory: 62.00MB
+
+OK (26 tests, 127 assertions)
 
 Process finished with exit code 0
 ```
