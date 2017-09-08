@@ -34,3 +34,4 @@ Thumbs.db
 
 # IDE autocomplite for the codeception classes (within core and vendors)
 .codecept
+.phpstorm_helpers
