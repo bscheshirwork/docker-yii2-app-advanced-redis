@@ -44,7 +44,7 @@ services:
     volumes_from:
       - php
     volumes:
-      - ../nginx-conf:/etc/nginx/conf.d #nginx-conf
+      - ../nginx-conf-test:/etc/nginx/conf.d #nginx-conf
       - ../nginx-logs:/var/log/nginx #nginx-logs
   db:
     image: mysql:8.0.2
