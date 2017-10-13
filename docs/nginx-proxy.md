@@ -60,7 +60,7 @@ services:
 networks:
   default:
     external:
-      name: dockeryii2appadvancedrbac_default
+      name: dockeryii2appadvancedredis_default
 ```
 
 Выполните
