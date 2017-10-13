@@ -48,9 +48,9 @@ return [
 
 namespace components\queue;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 
-class DownloadJob extends Object implements \yii\queue\Job
+class DownloadJob extends BaseObject implements \yii\queue\JobInterface
 {
     public $url;
     public $file;
