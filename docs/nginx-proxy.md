@@ -1,9 +1,8 @@
 # Nginx-proxy
 
-You can use `nginx-proxy` docker-compose in same docker network to resolve virtual hosts
+Для разрешения виртуальных серверов можно использовать `nginx-proxy` в той же сети докера.
 
-Make `nginx-proxy` folder and use it.
-Make files like this
+Создайте дирректорию `nginx-proxy`  и следующую структуру файлов в ней
 
 ### `nginx-conf/nginx.conf`
 ```conf
@@ -61,11 +60,11 @@ services:
 networks:
   default:
     external:
-      name: dockeryii2appadvanced_default
+      name: dockeryii2appadvancedrbac_default
 ```
 
-Use 
+Выполните
 ```
 docker-compose -f nginx-proxy/docker-compose.yml up -d 
 ```
-command after `docker-compose up -d` of main composition.
+После старта основной композиции `docker-compose up -d`.
