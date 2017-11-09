@@ -108,14 +108,14 @@ wget http://codeception.com/codecept.phar
 `codecept.phar` использован, дабы не плодить мусор в вендорах (чего хотелось, до последнего, избежать)
 это позоволяет не трогать `composer.json` в секции `require-dev`. Минус - ручное обновление. 
 
-> Важно заметить, что при сборе данных о покрытии с помощью `c3.php` используется Codeception из `codecept.phar` и 
-выполняется код этого всего внутри контейнера сервиса `php`. Который отличаетя от контейнера сервиса `codecept`
+> Можно заметить, что при сборе данных о покрытии с помощью `c3.php` используется Codeception из `codecept.phar` и 
+выполняется код внутри контейнера сервиса `php`. Который отличался от контейнера сервиса `codecept`
 "точкой монтирования" `php-code`.
-Это не позволяет Codeception смешать результаты покрытия: например, из `/var/www/html/frontend/models/ContactForm.php` 
-и `/project/frontend/models/ContactForm.php` будет взят только существующий в `codecept` путь `/project/...`
+Это не позволяло Codeception смешать результаты покрытия: например, из `/var/www/html/frontend/models/ContactForm.php` 
+и `/project/frontend/models/ContactForm.php` брался только существующий в `codecept` путь `/project/...`
+Установка `workdir` сервиса `codecept` в `/var/www/html/` решило проблему.
 
-Настройки "удалённого тестирования" включают в себя `remote: true` (см. выше), `c3_url` (опционально) 
-и `remote_config` (обязательно)
+Настройки "удалённого тестирования" включают в себя `c3_url` (опционально) и `remote_config` (обязательно)
 
 Необходим полный доступ к папкам отчётов. Задайте его, если возникают соответствующие проблемы.
 ```sh
@@ -361,15 +361,15 @@ Codeception PHP Testing Framework v2.3.5
 Powered by PHPUnit 5.7.21 by Sebastian Bergmann and contributors.
 
 
-[common\tests]: tests from /project/common
+[common\tests]: tests from /var/www/html/common
 
 
 
-[frontend\tests]: tests from /project/frontend
+[frontend\tests]: tests from /var/www/html//frontend
 
 
 
-[backend\tests]: tests from /project/backend
+[backend\tests]: tests from /var/www/html/backend
 
 
 

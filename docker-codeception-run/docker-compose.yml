@@ -50,9 +50,8 @@ services:
       TZ: Europe/Moscow
       XDEBUG_CONFIG: "remote_host=192.168.0.83 remote_port=9002 remote_enable=On"
       PHP_IDE_CONFIG: "serverName=codeception"
-    volumes:
-      - ../php-code:/project
-      - ~/.composer/cache:/root/.composer/cache
+    volumes_from:
+      - php
   browser:
     image: selenium/standalone-chrome-debug:3.7.0
 #    image: selenium/standalone-firefox-debug:3.7.0
