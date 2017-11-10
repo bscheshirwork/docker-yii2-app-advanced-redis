@@ -71,6 +71,142 @@ if ((ip2long(@$_SERVER['REMOTE_ADDR']) ^ ip2long(@$_SERVER['SERVER_ADDR'])) >= 2
 for i in frontend backend; do sudo rm php-code/$i/tests/_output/$i.tests.* php-code/$i/tests/_output/debug/* php-code/$i/tests/_output/failed; done
 ```
 
+## Запуск оболочки в контейнере Codeception
+```
+docker-compose -f docker-codeception-run/docker-compose.yml run --rm --entrypoint bash codecept
+```
+
+## Покрытие кода тестами и c3.php
+
+### Настройки для `acceptance` тестов
+
+> Замечание для `acceptance` тестов: необходим `c3.php`, который требует установки `Codeception` в зависимостях.
+что вызввает необходимость дублировать код фреймворка тестирования.  
+Остальные типы тестов позволяют использовать проверку покрытия не устанавливая зависимость в `composer.json` кода,
+оставляя всю работу с тестами в контейнере сервиса тестов `codecept`
+
+Точка входа для тестов `php-code/backend|frontend/web/index-test.php` должна быть дополнена `c3.php` для определения покрытия при работе с 
+различными контейнерами для кода и для веб-сервера
+```php
+// Codeception testing routes
+if (file_exists(__DIR__ . '/../../c3.php')) {
+    define('C3_CODECOVERAGE_ERROR_LOG_FILE',
+        __DIR__ . '/runtime/c3_error.log'); //Optional (if not set the default c3 output dir will be used)
+    define('C3_CODECEPTION_CONFIG_PATH',
+        __DIR__ . '/tests'); //Optional (if not set the default c3 output dir will be used)
+    require_once __DIR__ . '/../../c3.php';
+}
+```
+
+При этом `c3.php` расположен в `php-code/` и общий для `frontend` и `backend` групп тестов.
+```sh
+cd php_code
+wget https://raw.github.com/Codeception/c3/2.0/c3.php
+
+wget http://codeception.com/codecept.phar
+```
+`codecept.phar` использован, дабы не плодить мусор в вендорах (чего хотелось, до последнего, избежать)
+это позоволяет не трогать `composer.json` в секции `require-dev`. Минус - ручное обновление. 
+
+> Можно заметить, что при сборе данных о покрытии с помощью `c3.php` используется Codeception из `codecept.phar` и 
+выполняется код внутри контейнера сервиса `php`. Который отличался от контейнера сервиса `codecept`
+"точкой монтирования" `php-code`.
+Это не позволяло Codeception смешать результаты покрытия: например, из `/var/www/html/frontend/models/ContactForm.php` 
+и `/project/frontend/models/ContactForm.php` брался только существующий в `codecept` путь `/project/...`
+Установка `workdir` сервиса `codecept` в `/var/www/html/` решило проблему.
+
+Настройки "удалённого тестирования" включают в себя `c3_url` (опционально) и `remote_config` (обязательно)
+
+Необходим полный доступ к папкам отчётов. Задайте его, если возникают соответствующие проблемы.
+```sh
+sudo chmod -R go+rw php-code/frontend/tests/_output php-code/backend/tests/_output php-code/common/tests/_output
+```
+
+Настройки групп тестов отличаются портом
+`php-code/backend/tests/acceptance.suite.yml`
+```yml
+        - WebDriver:
+            url: http://nginx:8081/
+            host: browser
+            port: 4444
+            browser: chrome
+```
+`php-code/frontend/tests/acceptance.suite.yml`
+```yml
+        - WebDriver:
+            url: http://nginx:8080/
+            host: browser
+            port: 4444
+            browser: chrome
+```
+соответствующий путь будет передан в `c3_url` (последнюю настройку возможно установить напрямую)
+
+### Общие настройки
+
+Настройки `php-code/codeception.yml` дополняются слеюующим
+```yml
+coverage:
+    enabled: true
+```
+
+Кроме уже обозначенных (а также ещё раз напоминая о remote_config)
+
+**Обязательно** необходимы огранчения покрытия
+**Обязательно** необходимы указания "удалённых" конфигов 
+
+`php-code/backend/codeception.yml`
+дополнятся следующим
+```yml
+coverage:
+    # from nginx-conf-test/nginx.conf
+    c3_url: http://nginx:8081/index-test.php
+    # redefine `php-code/codeception.yml` for `c3.php`. Relative to `c3.php` dir:
+    remote_config: backend/codeception.yml
+    enabled: true
+    include:
+        - models/*
+        - controllers/*
+    exclude:
+        - assets/*
+        - config/*
+        - runtime/*
+        - views/*
+        - web/*
+        - tests/*
+```
+
+`php-code/frontend/codeception.yml`
+дополнятся следующим
+```yml
+coverage:
+    # from nginx-conf-test/nginx.conf
+    c3_url: http://nginx:8080/index-test.php
+    # redefine `php-code/codeception.yml` for `c3.php`. Relative to `c3.php` dir:
+    remote_config: frontend/codeception.yml
+    enabled: true
+    include:
+        - models/*
+        - controllers/*
+    exclude:
+        - assets/*
+        - config/*
+        - runtime/*
+        - views/*
+        - web/*
+        - tests/*
+```
+
+Запуск тестов с покрытием кода
+```sh
+codecept run --coverage --coverage-xml --coverage-html
+```
+
+Результаты покрытия кода можно посмотреть в папке логов. Оная, согласно настройкам
+```yml
+paths:
+    log: console/runtime/logs
+```
+
 ## Codeception и Docker-инструменты PHPStorm
 
 Вдохновившись [заметкой про использоване PHPUnit](https://blog.jetbrains.com/phpstorm/2016/11/docker-remote-interpreters/)  
@@ -225,15 +361,15 @@ Codeception PHP Testing Framework v2.3.5
 Powered by PHPUnit 5.7.21 by Sebastian Bergmann and contributors.
 
 
-[common\tests]: tests from /project/common
+[common\tests]: tests from /var/www/html/common
 
 
 
-[frontend\tests]: tests from /project/frontend
+[frontend\tests]: tests from /var/www/html//frontend
 
 
 
-[backend\tests]: tests from /project/backend
+[backend\tests]: tests from /var/www/html/backend
 
 
 
