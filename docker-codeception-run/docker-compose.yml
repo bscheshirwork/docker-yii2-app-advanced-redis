@@ -32,7 +32,7 @@ services:
     ports:
       - "6379"
     volumes:
-      - ../redis-data:/data
+      - ../redis-data-test:/data
       - ../redis-conf:/etc/redis/conf.d
     depends_on:
       - php-supervisor
