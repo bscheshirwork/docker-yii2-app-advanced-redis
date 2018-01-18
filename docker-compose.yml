@@ -34,6 +34,8 @@ services:
       - ./redis-conf:/etc/redis/conf.d
     depends_on:
       - php-supervisor
+    environment:
+      TZ: Europe/Moscow
   nginx:
     image: nginx:1.13.8-alpine
     restart: always
