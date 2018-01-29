@@ -98,7 +98,7 @@ localuser@localmachine:~$ ssh vpsserver-remoteuser
 Если ключи настроены правильно, на данном этапе для подключения будет использован закрытый ключ. 
 Если же настройка не удалась, система запросит пароль.
 
-6.Отключение аутентификации на основе пароля (Применяется для всех пользователей)
+5.5.Отключение аутентификации на основе пароля (Применяется для всех пользователей)
 
 Теперь для аутентификации сервер использует SSH-ключи. Отключите аутентификацию на основе пароля. Это ограничит доступ к 
 серверу, так как SSH-ключи станут единственным способом подключиться к нему.
@@ -183,7 +183,7 @@ ssh-add ~/.ssh/id_dev_to_git
 
 # Для VPS позволяющих запустить докер 
 
-6.Установить `Docker`, `docker-compose`, опять-таки подробно описано [тут](https://www.8host.com/blog/ustanovka-i-ispolzovanie-docker-v-ubuntu-16-04/)
+6.Установить `Docker`, `docker-compose`, старый вариант [тут](https://www.8host.com/blog/ustanovka-i-ispolzovanie-docker-v-ubuntu-16-04/)
 За исключением первого важного шага: Install packages to allow apt to use a repository over HTTPS:
 ```
 $ sudo apt-get install -y --no-install-recommends \
@@ -192,8 +192,8 @@ $ sudo apt-get install -y --no-install-recommends \
     curl \
     software-properties-common
 ```
-Нужная часть руководства - [установка докера](./install-docker.md)
-Ели что-либо не работает, см. инструкцию на офф. сайте https://docs.docker.com/engine/installation/linux/ubuntu/
+Оффициальная инструкция установки `Docker` была изменена. Соответственно обновлён раздел [установка докера](./install-docker.md)
+В случае, если что-либо не работает см. инструкцию на [офф. сайте](https://docs.docker.com/install/linux/docker-ce/ubuntu)
 
 7.Установить `docker-compose`
 
