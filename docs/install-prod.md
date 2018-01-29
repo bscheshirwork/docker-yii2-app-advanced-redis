@@ -137,8 +137,15 @@ root@vpsidhere:~$ sudo systemctl reload sshd
 dev@vpsidhere:~# ssh-keygen -t rsa -b 4096 -C "dev@vpsidhere.vpsserver.com to bitbacket,gitlab"
 Enter file in which to save the key (/home/dev/.ssh/id_rsa): /home/dev/.ssh/id_dev_to_git
 ```
-Пользователю `bitbacket`/`gitlab`, который назначен ботом (или. если не хватает слотов - обычному) вписать публичный ключ
-сгенерированной пары (`{avatar}->bitbucket settings->SSH keys`, `{avatar}->settings->SSH keys`)
+Пользователю `bitbacket`/`gitlab`, который назначен ботом (или группе, если не хватает слотов - обычному) вписать публичный ключ
+сгенерированной пары 
+```
+cat /home/dev/.ssh/id_dev_to_git.pub
+```
+(`{avatar}->bitbucket settings->SSH keys`, `{avatar}->settings->SSH keys`)
+
+> Также, для `bitbucket.org` есть возможность добавить ключ группе
+[группе](https://bitbucket.org/account/user/yourgroup/ssh-keys/)
 
 В дальнейшем пример для `bitbucket.org`.
 
@@ -146,12 +153,38 @@ Enter file in which to save the key (/home/dev/.ssh/id_rsa): /home/dev/.ssh/id_d
 ```
 echo "Host bitbucket
      HostName bitbucket.org
-     User botusernameonbitbucket
+     User botuseroryourgroup
      IdentityFile ~/.ssh/id_dev_to_git
 " >> /home/dev/.ssh/config
 ```
 
-Если не запущен `ssh-client` 
+Проверка ssh доступа
+
+Эта команда проверяет ваш SSH-агент на ключ SSH, а затем проверяет, 
+соответствует ли этот закрытый ключ открытому ключу для существующей учетной записи Bitbucket:
+```sh
+$ ssh -T git@bitbucket.org
+```
+Варианты ответа:
+```
+$ ssh -T git@bitbucket.org
+Permission denied (publickey). 
+```
+= Вы не имеете корректных ключей, загруженных в ssh-клиент (см. ниже)
+```
+$ ssh -T git@bitbucket.org
+ssh: connect to host bitbucket.org port 22: Connection refused 
+```
+= невозможно получить IP адрес `bitbucket.org` для машины, с которой выполняется команда
+```
+$ ssh -T git@bitbucket.org
+logged in as botuseroryourgroup.
+
+You can use git or hg to connect to Bitbucket. Shell access is disabled.
+```
+= Всё в порядке!
+
+Итак, если не запущен `ssh-client` 
 ```
 remoteuser@vpsidhere:~$ ssh-add -l
 Could not open a connection to your authentication agent
@@ -173,13 +206,15 @@ remoteuser@vpsidhere:~$ ssh-add -l
 remoteuser@vpsidhere:~$ ssh -Tv git@bitbucket.org
 ```
 
-Проверка закончилась успехом? Закрепим в автозагрузке. Добавляем в конец `.bashrc` (все три строчки)
+Проверка закончилась успехом? Закрепим в автозагрузке. Добавляем в конец `.bashrc` (все три строчки, одинарные кавычки
+для `echo '' >> /home/dev/.bashrc`)
 ```
+echo '
 #!/bin/bash
 eval `ssh-agent -s`
 ssh-add ~/.ssh/id_dev_to_git
+' >> /home/dev/.bashrc
 ```
-
 
 # Для VPS позволяющих запустить докер 
 
