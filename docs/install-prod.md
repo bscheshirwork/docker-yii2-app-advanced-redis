@@ -244,10 +244,12 @@ sudo ln -sF /home/dev/projects/yii2advanced /yii2advanced
 ```
 
 Кроме клонирования репозитория с докер-композицией необходимо инициализировать `git submodule`
-в папке `php-code`. 
+в папке `php-code` и переключить его на `master`. 
 ```
 cd /home/dev/projects/yii2advanced
 git submodule update --init --recursive --remote php-code
+cd /home/dev/projects/yii2advanced/php-code
+git checkout master 
 ```
 
 9.Запустить конфигурацию `docker-compose.yml` из папки проекта `yii2advanced`.
