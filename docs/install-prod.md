@@ -271,17 +271,19 @@ usage: scp [-12346BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]
            [[user@]host1:]file1 ... [[user@]host2:]file2
 ```
 
-Таким образом, перенесём конфиги для дальнейшего исправления (выполнить на клиенте)
-```
-for i in backend common console frontend; do for j in "main-local.php" "params-local.php"; do scp /home/dev/projects/yii2advanced/php-code/$i/config/$j dev@host:/home/dev/projects/yii2advanced/php-code/$i/config/$j; done; done
-```
-Необходимо указать настройки почты, настройки подключения к базе. 
-
-После исправления можно использовать для следующих установок/восстановления - создав копию
+Таким образом также можно получить конфиги для дальнейшего исправления (выполнить на клиенте)
 ```
 for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do mkdir -p /home/dev/projects/yii2advanced_config/php-code/$i/config; cp -p /home/dev/projects/yii2advanced/php-code/$i/config/$j /home/dev/projects/yii2advanced_config/php-code/$i/config/$j; done; done;
 ```
-Восстановление, соответственно, обратное
+Необходимо указать настройки почты, настройки подключения к базе.
+
+После исправления можно использовать для следующих установок/восстановления
+После проверки настроек для `production`, можно применить их, скопировав на сервер
+```
+for i in backend common console frontend; do for j in "main-local.php" "params-local.php"; do scp /home/dev/projects/yii2advanced/php-code/$i/config/$j dev@host:/home/dev/projects/yii2advanced/php-code/$i/config/$j; done; done
+```
+
+Восстановление (настроек "как на сервере"), соответственно, обратное
 ```
 for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do sudo cp -p /home/dev/projects/yii2advanced_config/php-code/$i/config/$j /home/dev/projects/yii2advanced/php-code/$i/config/$j; done; done;
 ```
