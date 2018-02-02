@@ -264,6 +264,44 @@ time /usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-com
 ```
 
 11.Инициализировать как `production` ([см. install](./install.md))
+```sh
+/usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-compose.yml run --rm php ./init
+Yii Application Initialization Tool v1.0
+
+Which environment do you want the application to be initialized in?
+
+  [0] Development
+  [1] Production
+
+  Your choice [0-1, or "q" to quit] 1
+
+  Initialize the application under 'Production' environment? [yes|no] yes
+
+  Start initialization ...
+
+   generate yii
+   generate frontend/config/params-local.php
+   generate frontend/config/main-local.php
+   generate frontend/web/index.php
+   generate frontend/web/robots.txt
+   generate common/config/params-local.php
+   generate common/config/main-local.php
+   generate console/config/params-local.php
+   generate console/config/main-local.php
+   generate backend/config/params-local.php
+   generate backend/config/main-local.php
+   generate backend/web/index.php
+   generate backend/web/robots.txt
+   generate cookie validation key in backend/config/main-local.php
+   generate cookie validation key in frontend/config/main-local.php
+      chmod 0777 backend/runtime
+      chmod 0777 backend/web/assets
+      chmod 0777 frontend/runtime
+      chmod 0777 frontend/web/assets
+      chmod 0755 yii
+
+  ... initialization completed.
+```
 Внести данные локальных конфигов. Использовать `scp` либо редактор по вкусу (`mcedit`,`nano`,...)
 ```
 usage: scp [-12346BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]
@@ -271,9 +309,9 @@ usage: scp [-12346BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]
            [[user@]host1:]file1 ... [[user@]host2:]file2
 ```
 
-Таким образом также можно получить конфиги для дальнейшего исправления (выполнить на клиенте)
+Таким образом также можно получить сгенерированные конфиги для дальнейшего исправления (выполнить на клиенте)
 ```
-for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do mkdir -p /home/dev/projects/yii2advanced_config/php-code/$i/config; cp -p /home/dev/projects/yii2advanced/php-code/$i/config/$j /home/dev/projects/yii2advanced_config/php-code/$i/config/$j; done; done;
+for i in backend common console frontend; do for j in main-local.php params-local.php; do mkdir -p /home/dev/projects/yii2advanced_config/php-code/$i/config; cp -p /home/dev/projects/yii2advanced/php-code/$i/config/$j /home/dev/projects/yii2advanced_config/php-code/$i/config/$j; done; done;
 ```
 Необходимо указать настройки почты, настройки подключения к базе.
 
