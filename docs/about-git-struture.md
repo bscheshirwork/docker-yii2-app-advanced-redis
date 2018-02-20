@@ -76,7 +76,7 @@ cd ../..
 cd ./php-code
 git pull parent master
 cd ..
-sed -i -e 's/\(php:\?\)7.1.8/\17.1.9/;s/nginx:1.13.2/nginx:1.13.3/' ./docker-compose.yml ./docker-run/docker-compose.yml ./docker-codeception-run/docker-compose.yml
+sed -i -e 's/\(php:\?\)7.2.1/\17.2.2/;s/nginx:1.13.7/nginx:1.13.8/' ./docker-compose.yml ./docker-run/docker-compose.yml ./docker-codeception-run/docker-compose.yml
 git status
 ```
 
@@ -98,3 +98,14 @@ git status
 ```
 
 и т.п.
+
+# Внешние репозитории
+Для удобства используются псевдонимы `parent`, добавленные для соответствующих репозиториев (`url` см. выше)
+```sh
+git remote add parent parentUrlHere
+```
+
+с отключённой возможностью изменить предка
+```sh
+git remote set-url --push parent DISSALOWED
+```
