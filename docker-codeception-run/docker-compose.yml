@@ -39,7 +39,7 @@ services:
     environment:
       TZ: Europe/Moscow
   nginx:
-    image: nginx:1.13.8-alpine
+    image: nginx:1.13.9-alpine
     restart: always
     depends_on:
       - php

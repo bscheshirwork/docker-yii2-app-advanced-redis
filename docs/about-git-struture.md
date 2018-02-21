@@ -82,7 +82,7 @@ cd ../..
 cd ./php-code
 git pull parent master
 cd ..
-sed -i -e 's/\(php:\?\)7.2.1/\17.2.2/;s/nginx:1.13.7/nginx:1.13.8/' ./docker-compose.yml ./docker-run/docker-compose.yml ./docker-codeception-run/docker-compose.yml
+sed -i -e 's/\(php:\?\)7.2.1/\17.2.2/;s/nginx:1.13.8/nginx:1.13.9/' ./docker-compose.yml ./docker-run/docker-compose.yml ./docker-codeception-run/docker-compose.yml
 git status
 ```
 
