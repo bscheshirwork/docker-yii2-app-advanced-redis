@@ -258,9 +258,9 @@ git checkout master
 /usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-compose.yml up -d
 ```
 
-10.Загрузить указанные в `composer.lock` версии пакетов
+10.Загрузить указанные в `composer.lock` версии пакетов (с опцией `--no-dev`)
 ```
-time /usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-compose.yml run --rm php composer install -vv
+time /usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-compose.yml run --rm php composer install --no-dev -vvv
 ```
 
 11.Инициализировать как `production` ([см. install](./install.md))
