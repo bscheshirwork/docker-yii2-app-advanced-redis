@@ -12,7 +12,7 @@ services:
       TZ: Europe/Moscow
       XDEBUG_CONFIG: "remote_enable=Off remote_autostart=Off"
   php-supervisor: # for workers
-    image: bscheshir/php:7.2.2-fpm-alpine-4yii2-supervisor
+    image: bscheshir/php:7.2.3-fpm-alpine-4yii2-supervisor
     restart: always
     volumes:
       - ./php-code:/var/www/html #php-code
