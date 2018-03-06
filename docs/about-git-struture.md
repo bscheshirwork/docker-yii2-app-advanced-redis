@@ -107,7 +107,7 @@ git status
 
 Для всей цепочки можно запустить обновление общих подмодулей в цикле:
 ```sh
-for i in "/home/dev/projects/docker-yii2-app-advanced" "/home/dev/projects/docker-yii2-app-advanced-rbac"; do for j in "docker-codeception-run/docker-codeception-yii2" "docker-run/docker-php"; do cd $i/$j; git pull; done; done
+for i in "/home/dev/projects/docker-yii2-app-advanced" "/home/dev/projects/docker-yii2-app-advanced-rbac" "/home/dev/projects/docker-yii2-app-advanced-redis"; do for j in "docker-codeception-run/docker-codeception-yii2" "docker-run/docker-php"; do cd $i/$j; git pull; done; done
 ```
 
 # Внешние репозитории
