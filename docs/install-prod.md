@@ -399,8 +399,9 @@ ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -ur
 Пример для запущенного на разработке при обновлении версии движка базы.
 Остановить композицию, Удалить файлы мускула, запустить новую версию, после чего развернуть дампы
 1. 
+> note: `--all-databases` поломан в `8.0.4`, не копировать схему. Схема создаётся заново. Копируются и восстанавливаются конкретные базы.
 ```
-/usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-run/docker-compose.yml exec mysql sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/dump.sql
+/usr/local/bin/docker-compose -f /home/dev/projects/yii2advanced/docker-run/docker-compose.yml exec mysql sh -c 'exec mysqldump yii2advanced -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/dump.sql
 ```
 2. 
 ```
@@ -408,7 +409,7 @@ docker-compose -f /home/dev/projects/yii2advanced/docker-run/docker-compose.yml 
 ```
 3. 
 ```
-time -p docker exec -i dockerrun_mysql_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD"' < ~/dump.sql
+time -p docker exec -i dockerrun_mysql_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --database=yii2advanced' < ~/dump.sql
 ```
 также, для надёжности можно сохранить файлы баз до окончания переезда:
 1.5.
