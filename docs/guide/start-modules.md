@@ -12,15 +12,6 @@
 [rbac](#rbac) | графическое представление RBAC | githubjeka\rbac\Module
 [admin](#admin) | управление RBAC | mdm\admin\Module
 
-Ниже приведён список источников миграций, которые были использованы в требуемом порядке,
-при установке модулей по отдельности необходимо использовать соответствуюие пути миграции. Эти же пути должны быть указаны
-для отмены миграции:
-
-```
-./yii migrate/up --migrationPath=@yii/rbac/migrations/
-./yii migrate/up --migrationPath=@dektrium/user/migrations
-./yii migrate/up --migrationPath=@mdm/admin/migrations
-```
 
 user <span id="start-modules-user"></span>
 -----------------------

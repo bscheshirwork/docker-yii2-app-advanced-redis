@@ -21,8 +21,7 @@
 Для установки [шаблона advanced](https://github.com/yiisoft/yii2-app-advanced/blob/master/docs/guide/README.md)
 используйте команды
 
-```
-composer global require "fxp/composer-asset-plugin:~1.1.1"
+```sh
 composer create-project --prefer-dist yiisoft/yii2-app-advanced yii2-advanced-rbac
 ```
 
@@ -36,7 +35,7 @@ composer create-project --prefer-dist yiisoft/yii2-app-advanced yii2-advanced-rb
 
 #### Настройки отправки почты:
 В файле `yii2-advanced-rbac/environments/dev/common/config/main-local.php` укажите настройки `transport` либо `useFileTransport`
-```
+```php
 <?php
 return [
     'components' => [
@@ -62,7 +61,7 @@ return [
 Важно! Для почтового сервера необходимо привести в соответствие логину (почтовому сервису) адреса отправителей
 Необходимо изменть настройку в файле конфигурации
 `server/environments/dev/common/config/params-local.php`
-```
+```php
 <?php
 return [
     'adminEmail' => 'username@youmailserver.com',
@@ -85,7 +84,7 @@ return [
 
 `yii2-advanced-rbac/environments/dev/common/config/main-local.php`
 
-```
+```php
 <?php
 return [
     'components' => [
@@ -104,7 +103,7 @@ return [
 
 Выполните скрипт инициализации, окружение "dev". При этом изменённые настройки будут скопированы в соответствующие папки
 
-```
+```sh
 ./init
 ```
 
@@ -115,7 +114,7 @@ return [
 > Примечание: миграция будет приведена ниже
 
 Для добавления зависимости выполните из папки приложения
-```
+```sh
 composer require "dektrium/yii2-user:0.9.*@dev"
 ```
 
@@ -125,7 +124,7 @@ composer require "dektrium/yii2-user:0.9.*@dev"
 
 Конфигурация `yii2-advanced-rbac/common/config/main.php`
 
-```
+```php
     'modules' => [
         'user' => [
             'class' => 'dektrium\user\Module',
@@ -136,7 +135,7 @@ composer require "dektrium/yii2-user:0.9.*@dev"
 Запрет доступа к профилю, восстановлению пароля, регистрации и настройкам своего аккаунта из бекенда: в
 `yii2-advanced-rbac/backend/config/main.php` добавить:
 
-```
+```php
     'modules' => [
         'user' => [
             // Отключить контроллеры profile, recovery, registration, settings. Остались security, admin
@@ -147,7 +146,7 @@ composer require "dektrium/yii2-user:0.9.*@dev"
 
 Запрет администрирования с фронтенда: в `yii2-advanced-rbac/frontend/config/main.php` добавить:
 
-```
+```php
     'modules' => [
         'user' => [
             // Отключить контроллер admin. Остались profile, recovery, registration, security, settings.
@@ -180,12 +179,12 @@ yii2-advanced-rbac/frontend/views/layouts/main.php
 -----------------------
 
 Для добавления зависимости выполните из папки приложения
-```
+```sh
 composer require "githubjeka/yii2-gui-rbac:*"
 ```
 
 Добавьте в конфиг бэкенда `yii2-advanced-rbac/backend/config/main.php` модуль `rbac`,
-```
+```php
 'modules' => [
     'rbac' => [
         'class' => 'githubjeka\rbac\Module',
@@ -203,12 +202,12 @@ composer require "githubjeka/yii2-gui-rbac:*"
 > Примечание: миграция будет приведена ниже
 
 Для добавления зависимости выполните из папки приложения
-```
+```sh
 composer require "mdmsoft/yii2-admin:2.x-dev"
 ```
 
 Добавьте в общий конфиг `yii2-advanced-rbac/common/config/main.php` модуль `admin`,
-```
+```php
 'modules' => [
     'admin' => [
         'class' => 'mdm\admin\Module',
@@ -224,48 +223,46 @@ composer require "mdmsoft/yii2-admin:2.x-dev"
 -----------------------
 
 Добавьте конфигурацию компонента приложения `rbac` в общий конфиг `yii2-advanced-rbac/common/config/main.php`
-```
+```php
     'authManager' => [
         'class' => 'yii\rbac\DbManager',
     ],
 ```
 
-Ниже приведён список источников миграций, которые были использованы в требуемом порядке.
-При установке модулей по отдельности необходимо использовать соответствуюие пути миграции.
-Эти же пути должны быть указаны для отмены миграции:
-
-```
-./yii migrate/up --migrationPath=@yii/rbac/migrations/
-./yii migrate/up --migrationPath=@dektrium/user/migrations
-./yii migrate/up --migrationPath=@mdm/admin/migrations
+> Ниже приведён список источников миграций, которые были использованы.
+Данные пути были добавлены в конфиг консольного приложения `yii2-advanced-rbac/console/config/main.php`
+```php
+    'controllerMap' => [
+        'migrate' => [
+            'class' => 'yii\console\controllers\MigrateController',
+            // Since version 2.0.12 an array can be specified for loading migrations from multiple sources.
+            'migrationPath' => [
+                '@yii/rbac/migrations/',
+                '@dektrium/user/migrations',
+                '@mdm/admin/migrations',
+                '@app/migrations',
+            ],
+        ],
+    ],
 ```
 
 Выполните миграции
-```
+```sh
 ./yii migrate/up
-```
-
-Быстрые команды для выполнения и отката миграций выглядят так: 
-```
-for i in "--migrationPath=@yii/rbac/migrations/" "--migrationPath=@dektrium/user/migrations" "--migrationPath=@mdm/admin/migrations" ""; do ./yii migrate/up $i; done
-```
-> для того, чтобы откатить миграции необходимо их в обратном порядке перечислять (зависимость от пути не позволяет использовать короткий синтаксис)
-```
-for i in "" "--migrationPath=@mdm/admin/migrations" "--migrationPath=@dektrium/user/migrations" "--migrationPath=@yii/rbac/migrations/"; do ./yii migrate/down $i; done
 ```
 
 При этом вы проведёте инициализацию rbac. **Первый пользователь получит права администратора**.
 
 Создать пользователя можно тут же, командой
-```
- ./yii user/create usermail@usermailserver.com login
+```sh
+./yii user/create usermail@usermailserver.com login
 ```
 
 Вы успешно установили три модуля и инициализировали RBAC, теперь самое время использовать эту систему для ограничения доступа.
 
 Сделать это можно через конфиг, добавляя поведение либо к контролеру, либо к целевому модулю либо к приложению вообще
 
-```
+```php
     'modules' => [
         'admin' => [
             'class' => 'mdm\admin\Module',
@@ -283,7 +280,7 @@ for i in "" "--migrationPath=@mdm/admin/migrations" "--migrationPath=@dektrium/u
 ```
 
 Для контроллеров модуля - используя карту контроллеров
-```
+```php
     'modules' => [
         'user' => [
             'class' => 'dektrium\user\Module',
@@ -306,6 +303,6 @@ for i in "" "--migrationPath=@mdm/admin/migrations" "--migrationPath=@dektrium/u
 ```
 
 В любом месте - используя конструкцию
-```
+```php
 yii\web\User::can()
 ```
