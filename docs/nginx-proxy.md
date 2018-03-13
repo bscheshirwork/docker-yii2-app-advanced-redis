@@ -50,7 +50,7 @@ server {
 version: '2'
 services:
   nginx-proxy:
-    image: nginx:1.13.8-alpine
+    image: nginx:1.13.9-alpine
     restart: always
     ports:
       - "80:80"
