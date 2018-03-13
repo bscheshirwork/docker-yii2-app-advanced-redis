@@ -274,7 +274,7 @@ paths:
 
 Всё отлично, казалось бы, и должно быть одинаково - но нет. Тесты, завершающиеся успехом при запуске контейнера `codecept` 
 из командной строки
-```
+```sh
 docker-compose -f docker-codeception-run/docker-compose.yml run --rm codecept run
 ...
 Time: 1.59 minutes, Memory: 62.00MB
@@ -284,7 +284,7 @@ OK (26 tests, 127 assertions)
 при запуске из `PHPStorm` в некоторых случаях провалиоись. Видимо, контейнер, создаваемый IDE изменён (например, в части пользователей)
 Также, что интерестно, IDE показывает другое количество тестов, а именно: `344 tests done: 14 failed - 1m 12s 730ms` в
 строке прогресса и
-```
+```sh
 FAILURES!
 Tests: 26, Assertions: 74, Failures: 14.
 ```
@@ -302,7 +302,7 @@ session_start(): Cannot send session cache limiter - headers already sent (outpu
 phpstorm_helpers:PS-173.4548.32
 ```
 Копируем, например, из запущеного контейнера, средствами `docker` 
-```
+```sh
 rm -Rf ~/projects/.phpstorm_helpers
 docker cp phpstorm_helpers_PS-173.4548.32:/opt/.phpstorm_helpers/ ~/projects/.phpstorm_helpers
 ```
@@ -350,7 +350,7 @@ class PhpStorm_Codeception_ReportPrinter extends PhpStorm_Codeception_ReportPrin
 
 и удалив все старые контейнеры, которые могли закешировать его реализацию 
 (я говорю о тебе, Reflection в Codeception), можно в папке `.phpstorm_helpers` запустить билд образа.
-```
+```sh
 cd ~/projects/.phpstorm_helpers/
 docker build --no-cache --pull -t phpstorm_helpers:PS-173.4548.32 .
 ```

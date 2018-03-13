@@ -18,7 +18,7 @@
 1.Успешно подключится под рутом к серверу используя пароль.
 `localuser@localmachine:~$ ssh root@vpsidhere.vpsserver.com`
 2.Задать временную зону, установить `git` по желанию `mc`
-```
+```sh
 root@vpsidhere:~# dpkg-reconfigure tzdata
 root@vpsidhere:~# date
 root@vpsidhere:~# apt-get update
@@ -26,21 +26,21 @@ root@vpsidhere:~# apt-get install git mc
 ```
 3.Создать пользователя `dev`, задать пароль, выдать права рута
 неплохо расписано [тут](https://www.8host.com/blog/nachalnaya-nastrojka-servera-ubuntu-16-04/)
-```
+```sh
 root@vpsidhere:~# adduser dev
 Enter new UNIX password: 
 ```
-```
+```sh
 root@vpsidhere:~# usermod -aG sudo dev
 ```
 4.Добавить авторизацию по ключу. 
-```
+```sh
 localuser@localmachine:~$ ssh-keygen -t rsa -b 4096 -C "localuser@localmachine to remoteuser@vpsidhere.vpsserver.com"
 Enter file in which to save the key (/home/localuser/.ssh/id_rsa): /home/localuser/.ssh/id_localuser_to_dev_vpsidhere_fastvps
 localuser@localmachine:~$ ssh-copy-id -i id_localuser_to_remotesuer_vpsidhere remoteuser@vpsidhere.vpsserver.com
 ```
 Если `ssh` хочет ключ сразу и, соответственно, отказывает в подключении, 
-```
+```sh
 ssh dev@{ip}
 Received disconnect from {ip} port 22:2: Too many authentication failures
 Connection to {ip} closed by remote host.
@@ -49,7 +49,7 @@ Connection to {ip} closed.
 необходимо 
 a) Настроить авторизацию только по логину+паролю
 `~/.ssh/config`
-```
+```conf
 Host vpsserver-remoteuser
      HostName remotehostorip
      User remoteuser
@@ -58,7 +58,7 @@ Host vpsserver-remoteuser
      Port 22
 ```
 попробовать снова (обязательно подключение по алиасу, критично значение настроек `PasswordAuthentication yes` и `PubkeyAuthentication no`)
-```
+```sh
 localuser@localmachine:~$ ssh-copy-id -i id_localuser_to_remotesuer_vpsidhere vpsserver-remoteuser
 ```
 
@@ -69,20 +69,20 @@ b) использовать вариант с копированием ключ�
 `ssh root@{ip}`
 
 Создайте новый каталог .ssh и ограничьте доступ к нему:
-```
+```sh
 mkdir ~/.ssh
 chmod 700 ~/.ssh
 ```
 
 Откройте файл `authorized_keys` в каталоге `.ssh`:
-```
+```sh
 nano ~/.ssh/authorized_keys
 ```
 
 Вставьте в него открытый ключ. Нажмите `CTRL-x`, `y` и `Enter`, чтобы закрыть и сохранить файл.
 
 Заблокируйте доступ к файлу `authorized_keys`:
-```
+```sh
 chmod 600 ~/.ssh/authorized_keys
 ```
 
@@ -91,7 +91,7 @@ chmod 600 ~/.ssh/authorized_keys
 > Важно! Не отключайтесь от сервера, пока не убедитесь в том, что SSH-ключи работают.
 
 На локальной машине откройте новый терминал и попробуйте подключиться к серверу.
-```
+```sh
 localuser@localmachine:~$ ssh vpsserver-remoteuser
 ```
 
@@ -133,13 +133,13 @@ root@vpsidhere:~$ sudo systemctl reload sshd
 
 ## Настройка подключения к хранилищу кода
 Создать пару ключей на сервере - для доступа к закрытым репозиториям (без защиты фразой, будет использоватся скриптами)
-```
+```sh
 dev@vpsidhere:~# ssh-keygen -t rsa -b 4096 -C "dev@vpsidhere.vpsserver.com to bitbacket,gitlab"
 Enter file in which to save the key (/home/dev/.ssh/id_rsa): /home/dev/.ssh/id_dev_to_git
 ```
 Пользователю `bitbacket`/`gitlab`, который назначен ботом (или группе, если не хватает слотов - обычному) вписать публичный ключ
 сгенерированной пары 
-```
+```sh
 cat /home/dev/.ssh/id_dev_to_git.pub
 ```
 (`{avatar}->bitbucket settings->SSH keys`, `{avatar}->settings->SSH keys`)
@@ -150,7 +150,7 @@ cat /home/dev/.ssh/id_dev_to_git.pub
 В дальнейшем пример для `bitbucket.org`.
 
 Добавить конфиг для определения нужного публичного ключа
-```
+```sh
 echo "Host bitbucket
      HostName bitbucket.org
      User botuseroryourgroup
@@ -166,17 +166,17 @@ echo "Host bitbucket
 $ ssh -T git@bitbucket.org
 ```
 Варианты ответа:
-```
+```sh
 $ ssh -T git@bitbucket.org
 Permission denied (publickey). 
 ```
 = Вы не имеете корректных ключей, загруженных в ssh-клиент (см. ниже)
-```
+```sh
 $ ssh -T git@bitbucket.org
 ssh: connect to host bitbucket.org port 22: Connection refused 
 ```
 = невозможно получить IP адрес `bitbucket.org` для машины, с которой выполняется команда
-```
+```sh
 $ ssh -T git@bitbucket.org
 logged in as botuseroryourgroup.
 
@@ -185,30 +185,30 @@ You can use git or hg to connect to Bitbucket. Shell access is disabled.
 = Всё в порядке!
 
 Итак, если не запущен `ssh-client` 
-```
+```sh
 remoteuser@vpsidhere:~$ ssh-add -l
 Could not open a connection to your authentication agent
 ```
 запускаем его, передавая переменные среды
-```
+```sh
 remoteuser@vpsidhere:~$ eval `ssh-agent -s`
 Agent pid 15518
 ```
 Добавляем файл ключа, проверяем 
-```
+```sh
 remoteuser@vpsidhere:~$ ssh-add ~/.ssh/id_dev_to_git
 Identity added: /home/dev/.ssh/id_dev_to_git (/home/dev/.ssh/id_dev_to_git)
 
 remoteuser@vpsidhere:~$ ssh-add -l
 ```
 Проверка подключения по `ssh` к `bitbucket`
-```
+```sh
 remoteuser@vpsidhere:~$ ssh -Tv git@bitbucket.org
 ```
 
 Проверка закончилась успехом? Закрепим в автозагрузке. Добавляем в конец `.bashrc` (все три строчки, одинарные кавычки
 для `echo '' >> /home/dev/.bashrc`)
-```
+```sh
 echo '
 #!/bin/bash
 eval `ssh-agent -s`
@@ -220,7 +220,7 @@ ssh-add ~/.ssh/id_dev_to_git
 
 6.Установить `Docker`, `docker-compose`, старый вариант [тут](https://www.8host.com/blog/ustanovka-i-ispolzovanie-docker-v-ubuntu-16-04/)
 За исключением первого важного шага: Install packages to allow apt to use a repository over HTTPS:
-```
+```sh
 $ sudo apt-get install -y --no-install-recommends \
     apt-transport-https \
     ca-certificates \
@@ -235,17 +235,17 @@ $ sudo apt-get install -y --no-install-recommends \
 8.Склонировать репозиторий с докер-композицией
 
 Использовать подключение по `ssh` к хранилищу кода (см.выше "Настройка подключения к хранилищу кода").
-```
+```sh
 git clone git@bitbucket.org:teamname/docker-yii2advanced.git /home/dev/projects/docker-yii2-app-advanced-redis
 ```
 При желании и для наглядности (по типу соринки в глазе) в корне создать ссылку на проект.
-```
+```sh
 sudo ln -sF /home/dev/projects/docker-yii2-app-advanced-redis /yii2advanced
 ```
 
 Кроме клонирования репозитория с докер-композицией необходимо инициализировать `git submodule`
 в папке `php-code` и переключить его на `master`. 
-```
+```sh
 cd /home/dev/projects/docker-yii2-app-advanced-redis
 git submodule update --init --recursive --remote php-code
 cd /home/dev/projects/docker-yii2-app-advanced-redis/php-code
@@ -254,12 +254,12 @@ git checkout master
 
 9.Запустить конфигурацию `docker-compose.yml` из папки проекта `yii2advanced`.
 Данная конфигурация включает только основные сервисы для работы и создана для `production`.
-```
+```sh
 /usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml up -d
 ```
 
 10.Загрузить указанные в `composer.lock` версии пакетов (с опцией `--no-dev`)
-```
+```sh
 time /usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml run --rm php composer install --no-dev -vvv
 ```
 
@@ -303,26 +303,26 @@ Which environment do you want the application to be initialized in?
   ... initialization completed.
 ```
 Внести данные локальных конфигов. Использовать `scp` либо редактор по вкусу (`mcedit`,`nano`,...)
-```
+```sh
 usage: scp [-12346BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]
            [-l limit] [-o ssh_option] [-P port] [-S program]
            [[user@]host1:]file1 ... [[user@]host2:]file2
 ```
 
 Таким образом также можно получить сгенерированные конфиги для дальнейшего исправления (выполнить на клиенте)
-```
+```sh
 for i in backend common console frontend; do for j in main-local.php params-local.php; do mkdir -p /home/dev/projects/docker-yii2-app-advanced-redis_config/php-code/$i/config; cp -p /home/dev/projects/docker-yii2-app-advanced-redis/php-code/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-redis_config/php-code/$i/config/$j; done; done;
 ```
 Необходимо указать настройки почты, настройки подключения к базе.
 
 После исправления можно использовать для следующих установок/восстановления
 После проверки настроек для `production`, можно применить их, скопировав на сервер
-```
+```sh
 for i in backend common console frontend; do for j in "main-local.php" "params-local.php"; do scp /home/dev/projects/docker-yii2-app-advanced-redis/php-code/$i/config/$j dev@host:/home/dev/projects/docker-yii2-app-advanced-redis/php-code/$i/config/$j; done; done
 ```
 
 Восстановление (настроек "как на сервере"), соответственно, обратное
-```
+```sh
 for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do sudo cp -p /home/dev/projects/docker-yii2-app-advanced-redis_config/php-code/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-redis/php-code/$i/config/$j; done; done;
 ```
 
@@ -347,42 +347,42 @@ for i in backend common console frontend; do for j in main-local.php params-loca
 Общие сведения
 
 Создаём бекап и сразу его архивируем
-```
+```sh
 mysqldump -u USER -pPASSWORD DATABASE | gzip > /path/to/outputfile.sql.gz
 ```
 Создание бекапа с указанием его даты
-```
+```sh
 mysqldump -u USER -pPASSWORD DATABASE | gzip > `date +/path/to/outputfile.sql.%Y%m%d.%H%M%S.gz`
 ```
 Заливаем бекап в базу данных
-```
+```sh
 mysql -u USER -pPASSWORD DATABASE < /path/to/dump.sql
 ```
 Заливаем архив бекапа в базу
-```
+```sh
 gunzip < /path/to/outputfile.sql.gz | mysql -u USER -pPASSWORD DATABASE
 ```
 или так
-```
+```sh
 zcat /path/to/outputfile.sql.gz | mysql -u USER -pPASSWORD DATABASE
 ```
 
 ## Использование mysqldump через ssh и docker
 
 Для создания дампа на сервере
-```
+```sh
 docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced 2>/dev/null' > ~/dump.sql
 ```
 > ! Обязательное подавление предупреждения `[Warning] Using a password on the command line interface can be insecure.` для исключения оного из дампа.
 > ! `docker-compose run` не работает после установки кодировки как параметров в точке входа. 
 
 Используя `docker-compose`
-```
+```sh
 /usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml exec db sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced 2>/dev/null'>~/dump.sql
 ```
 
 При восстановлении необходимо добавить ключ `-i` для перенаправления ввода.
-```
+```sh
 docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < ~/dump.sql
 ```
 
@@ -390,11 +390,11 @@ docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWOR
 > ! `docker-compose run` не работает после установки кодировки как параметров в точке входа. 
 
 Для создания дампа с передачей вывода на локальную машину. Запускать, соответственно, с клиента.
-```
+```sh
 ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced 2>/dev/null'" > ~/dump.sql
 ```
 Восстановить дамп с локальной машины.
-```
+```sh
 ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'" < ~/dump.sql
 ```
 
@@ -403,58 +403,58 @@ ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -ur
 Остановить композицию, Удалить файлы мускула, запустить новую версию, после чего развернуть дампы
 1. 
 > note: `--all-databases` поломан в `8.0.4`, не копировать схему. Схема создаётся заново. Копируются и восстанавливаются конкретные базы.
-```
+```sh
 /usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml exec mysql sh -c 'exec mysqldump yii2advanced -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/dump.sql
 ```
 2. 
-```
+```sh
 docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml down && sudo rm -rf /home/dev/projects/docker-yii2-app-advanced-redis/mysql-data/* /home/dev/projects/docker-yii2-app-advanced-redis/mysql-data-test/* && docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml up -d
 ```
 3. 
-```
+```sh
 time -p docker exec -i dockerrun_mysql_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --database=yii2advanced' < ~/dump.sql
 ```
 также, для надёжности можно сохранить файлы баз до окончания переезда:
 1.5.
-```
+```sh
 sudo mv /home/dev/projects/docker-yii2-app-advanced-redis/mysql-data /home/dev/projects/docker-yii2-app-advanced-redis/mysql-data-test /home/dev/projects/docker-yii2-app-advanced-redis/mysql-bak/
 ``` 
-```
+```sh
 sudo cp -rf /home/dev/projects/docker-yii2-app-advanced-redis/mysql-bak/* /home/dev/projects/docker-yii2-app-advanced-redis
 ```
 
 ### Применение 
 Создание дампа и архивирование (полный путь к дампу, запуск с клиентской машины)
-```
+```sh
 ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced 2>/dev/null' | gzip" > `date +/home/dev/dump.sql.%Y%m%d.%H%M%S.gz`
 ```
 Восстановление из архива (полный путь к архиву)
-```
+```sh
 zcat /home/dev/dump/1/dump.sql.date.time.gz | docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced'
 ```
 
 Восстановление из архива (полный путь к архиву, запуск с клиентской машины)
-```
+```sh
 zcat /home/dev/dump/1/dump.sql.date.time.gz | ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'"
 ```
 
 Интерактивная консоль MySQL
-```
+```sh
 docker exec -ti yii2advanced_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced'
 ```
-```
+```sh
 ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p\"\$MYSQL_ROOT_PASSWORD\" yii2advanced'
 ```
 
 ## Скрипт с ротацией дампов
 
-```
+```sh
 touch /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump
 chmod +x /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump
 ```
 Скрипт ротации для сервера.
 При запуске 2 раза в день и перезаписи после 30 дней
-```
+```bash
 #!/bin/bash
 export BACKUP_DIR='/home/dev/dump'
 ((SUBFOLDERNUM = 30*2))
@@ -474,19 +474,19 @@ ls -lAh $BACKUP_DIR/1
 ```
 
 crontab -e 
-```
+```sh
 * 8,19 * * * /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump
 ```
 
 ## Копирование созданных дампов на локальную машину
  
-```
+```sh
 touch /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump_copy
 chmod +x /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump_copy
 ```
 Копирование с клиентской машины по расписанию через 15 минут после начала дампа.
 При запуске 2 раза в день и перезаписи после 30 дней
-```
+```bash
 #!/bin/bash
 export BACKUP_DIR_REMOTE='/home/dev/dump'
 export BACKUP_DIR='/home/dev/dump_8host'
@@ -507,18 +507,18 @@ ls -lAh $BACKUP_DIR
 ```
 
 crontab -e 
-```
+```sh
 15 8,19 * * * /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump_copy > /dev/null 2>&1
 ```
 
 
 # Автообновление кода по git pull
-```
+```sh
 touch /home/dev/projects/docker-yii2-app-advanced-redis_git_pull
 chmod +x /home/dev/projects/docker-yii2-app-advanced-redis_git_pull
 ```
 Скрипт
-```
+```bash
 #!/bin/bash
 eval `ssh-agent -s`
 ssh-add ~/.ssh/id_dev_to_git
@@ -534,7 +534,7 @@ git --git-dir /home/dev/projects/docker-yii2-app-advanced-redis/php-code/.git pu
 после выполнения длительных операций перенаправить символическую ссылку, которую видят сервисы на неё.
 
 crontab -e
-```
+```sh
 1-59/5 * * * * /home/dev/projects/docker-yii2-app-advanced-redis_git_pull
 ```
 
@@ -548,11 +548,11 @@ crontab -e
 Настройки следующие:
 
 `docker-compose.yml`
-```
+```yml
 version: '2'
 services:
   nginx-proxy:
-    image: nginx:1.11.12-alpine
+    image: nginx:1.13.9-alpine
     restart: always
     ports:
       - "80:80"
@@ -565,7 +565,7 @@ networks:
       name: yii2advanced_default
 ```
 `nginx.conf`
-```
+```conf
 server {
     listen  80;
     #listen [::]:80 default_server ipv6only=on; ## слушаем ipv6
@@ -630,7 +630,7 @@ server {
 # Использование кеша для структуры таблиц
 
 В настройках приложения `common`
-```
+```php
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',
@@ -640,12 +640,12 @@ server {
 ```
 
 В миграциях, изменяющих структуру таблиц
-```
+```php
     Yii::$app->db->schema->refresh();
 ```
 
 После обновления структуры (если в миграциях не прописано очистки кеша) выполнить команду
-```
+```sh
 /usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml run --rm php ./yii cache/flush-all
 ```
 

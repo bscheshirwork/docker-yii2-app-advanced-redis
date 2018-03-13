@@ -89,7 +89,7 @@ git status
 После завершения слияния коммит и во внешний репозиторий.
 
 И для последующих
-```
+```sh
 cd ./docker-run/docker-php
 git pull origin master
 cd ../..
