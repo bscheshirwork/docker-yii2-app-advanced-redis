@@ -54,20 +54,10 @@ composer update
 их согласно вашим нуждам можно изменить(`docker-codeception-run/docker-compose.yml`, `docker-run/docker-compose.yml`, `php-code/common/config/main.php` - требуется root).
 > Внимание! Возникла ошибка доступа? При изменении настроек базы после её первого запуска не забываем останавливать композицию `docker-compose down` и чистить файлы базы `sudo rm -rf ../mysql-data/*`; Возникла ошибка `SQLSTATE[HY000] [2002] Connection refused` - база не успела поднятся. 
 
-В отличие от исходного шаблона, миграции необходимо выполнить для каждого из модулей 
-```
-./yii migrate/up --migrationPath=@yii/rbac/migrations/
-./yii migrate/up --migrationPath=@dektrium/user/migrations
-./yii migrate/up --migrationPath=@mdm/admin/migrations
-./yii migrate/up
-```
-Или так: 
-```
-for i in "--migrationPath=@yii/rbac/migrations/" "--migrationPath=@dektrium/user/migrations" "--migrationPath=@mdm/admin/migrations" ""; do ./yii migrate/up $i; done
-```
-> для того, чтобы откатить миграции необходимо их в обратном порядке перечислять (зависимость от пути не позволяет использовать короткий синтаксис)
-```
-for i in "" "--migrationPath=@mdm/admin/migrations" "--migrationPath=@dektrium/user/migrations" "--migrationPath=@yii/rbac/migrations/"; do ./yii migrate/down $i; done
+5.1.Выполнить миграции внутри контейнера
+
+```sh
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-compose.yml exec php ./yii migrate/up
 ```
 
 > Самое время создать дамп базы (например, такой метод использовался при создании используемого в тестах). При запущенном контейнере `dockerrun_db_1`
@@ -80,7 +70,7 @@ docker exec dockerrun_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD"
 docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < php-code/common/tests/_data/dump.sql
 ```
 
-При выполнении последней мигации вы проведёте инициализацию rbac [см. общая инструкция установки шаблона](./guide/start-installation.md). **Первый пользователь получит права администратора**.
+5.2.При выполнении последней мигации вы проведёте инициализацию rbac [см. общая инструкция установки шаблона](./guide/start-installation.md). **Первый пользователь получит права администратора**.
 
 Создать пользователя можно тут же, командой
 ```
