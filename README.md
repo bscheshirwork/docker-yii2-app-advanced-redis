@@ -27,14 +27,17 @@ docker-yii2-advanced-redis, созданный в Docker-образоах окр
 
 * [Установка](./docs/install.md)
 * [codeception](/docs/codeception.md).
-* [mysql-proxy](/docs/mysql-proxy.md).
+* [Установка Docker](./docs/install-docker.md)
 * [Развёртывание без спец.инструментов](/docs/install-prod.md).
+* [mysql-proxy](/docs/mysql-proxy.md).
+* [nginx-proxy](/docs/nginx-proxy.md).
 
 Описания
 * [Структура наследования репозиториев](/docs/about-git-struture.md).
 * [Про компонент очереди](/docs/about-queue.md).
 * [Про компонент подключения redis](/docs/about-redis.md).
 * [Про контейнер для worker'ов](/docs/about-supervisor.md).
+* [Настройки для отладки](/docs/about-debug-tool.md)
 
 Информация о yii2-advanced-rbac/redis
 * [Установка и описание yii2-advanced-rbac](./docs/guide/README.md)
@@ -42,4 +45,4 @@ docker-yii2-advanced-redis, созданный в Docker-образоах окр
 
 All Rights Reserved.
 
-2017 © bscheshir.work@gmail.com
+2018 © bscheshir.work@gmail.com
