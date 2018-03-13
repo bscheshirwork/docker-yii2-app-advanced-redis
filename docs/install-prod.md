@@ -236,36 +236,36 @@ $ sudo apt-get install -y --no-install-recommends \
 
 Использовать подключение по `ssh` к хранилищу кода (см.выше "Настройка подключения к хранилищу кода").
 ```
-git clone git@bitbucket.org:teamname/docker-yii2advanced.git /home/dev/projects/docker-yii2-app-advanced-rbac
+git clone git@bitbucket.org:teamname/docker-yii2advanced.git /home/dev/projects/docker-yii2-app-advanced-redis
 ```
 При желании и для наглядности (по типу соринки в глазе) в корне создать ссылку на проект.
 ```
-sudo ln -sF /home/dev/projects/docker-yii2-app-advanced-rbac /yii2advanced
+sudo ln -sF /home/dev/projects/docker-yii2-app-advanced-redis /yii2advanced
 ```
 
 Кроме клонирования репозитория с докер-композицией необходимо инициализировать `git submodule`
 в папке `php-code` и переключить его на `master`. 
 ```
-cd /home/dev/projects/docker-yii2-app-advanced-rbac
+cd /home/dev/projects/docker-yii2-app-advanced-redis
 git submodule update --init --recursive --remote php-code
-cd /home/dev/projects/docker-yii2-app-advanced-rbac/php-code
+cd /home/dev/projects/docker-yii2-app-advanced-redis/php-code
 git checkout master 
 ```
 
 9.Запустить конфигурацию `docker-compose.yml` из папки проекта `yii2advanced`.
 Данная конфигурация включает только основные сервисы для работы и создана для `production`.
 ```
-/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-compose.yml up -d
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml up -d
 ```
 
 10.Загрузить указанные в `composer.lock` версии пакетов (с опцией `--no-dev`)
 ```
-time /usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-compose.yml run --rm php composer install --no-dev -vvv
+time /usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml run --rm php composer install --no-dev -vvv
 ```
 
 11.Инициализировать как `production` ([см. install](./install.md))
 ```sh
-/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-compose.yml run --rm php ./init
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml run --rm php ./init
 Yii Application Initialization Tool v1.0
 
 Which environment do you want the application to be initialized in?
@@ -311,25 +311,25 @@ usage: scp [-12346BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]
 
 Таким образом также можно получить сгенерированные конфиги для дальнейшего исправления (выполнить на клиенте)
 ```
-for i in backend common console frontend; do for j in main-local.php params-local.php; do mkdir -p /home/dev/projects/docker-yii2-app-advanced-rbac_config/php-code/$i/config; cp -p /home/dev/projects/docker-yii2-app-advanced-rbac/php-code/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-rbac_config/php-code/$i/config/$j; done; done;
+for i in backend common console frontend; do for j in main-local.php params-local.php; do mkdir -p /home/dev/projects/docker-yii2-app-advanced-redis_config/php-code/$i/config; cp -p /home/dev/projects/docker-yii2-app-advanced-redis/php-code/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-redis_config/php-code/$i/config/$j; done; done;
 ```
 Необходимо указать настройки почты, настройки подключения к базе.
 
 После исправления можно использовать для следующих установок/восстановления
 После проверки настроек для `production`, можно применить их, скопировав на сервер
 ```
-for i in backend common console frontend; do for j in "main-local.php" "params-local.php"; do scp /home/dev/projects/docker-yii2-app-advanced-rbac/php-code/$i/config/$j dev@host:/home/dev/projects/docker-yii2-app-advanced-rbac/php-code/$i/config/$j; done; done
+for i in backend common console frontend; do for j in "main-local.php" "params-local.php"; do scp /home/dev/projects/docker-yii2-app-advanced-redis/php-code/$i/config/$j dev@host:/home/dev/projects/docker-yii2-app-advanced-redis/php-code/$i/config/$j; done; done
 ```
 
 Восстановление (настроек "как на сервере"), соответственно, обратное
 ```
-for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do sudo cp -p /home/dev/projects/docker-yii2-app-advanced-rbac_config/php-code/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-rbac/php-code/$i/config/$j; done; done;
+for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do sudo cp -p /home/dev/projects/docker-yii2-app-advanced-redis_config/php-code/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-redis/php-code/$i/config/$j; done; done;
 ```
 
 12.Выполнить миграции внутри контейнера / загрузить `dump`.
 
 ```sh
-/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-compose.yml exec php ./yii migrate/up
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml exec php ./yii migrate/up
 ```
 > Про загрузку дампа будет рассказано ниже.
 
@@ -339,7 +339,7 @@ for i in backend common console frontend; do for j in main-local.php params-loca
 14.Необходимо создать пользователя-администратора с `id` = 1
 
 ```sh
-/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-compose.yml exec php bash
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml exec php bash
 ./yii user/create usermail@usermailserver.com login
 ```
 
@@ -378,7 +378,7 @@ docker exec yii2advanced_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWO
 
 Используя `docker-compose`
 ```
-/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-compose.yml exec db sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced 2>/dev/null'>~/dump.sql
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml exec db sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced 2>/dev/null'>~/dump.sql
 ```
 
 При восстановлении необходимо добавить ключ `-i` для перенаправления ввода.
@@ -404,11 +404,11 @@ ssh vpsserver-remoteuser "docker exec -i yii2advanced_db_1 sh -c 'exec mysql -ur
 1. 
 > note: `--all-databases` поломан в `8.0.4`, не копировать схему. Схема создаётся заново. Копируются и восстанавливаются конкретные базы.
 ```
-/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-run/docker-compose.yml exec mysql sh -c 'exec mysqldump yii2advanced -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/dump.sql
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml exec mysql sh -c 'exec mysqldump yii2advanced -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/dump.sql
 ```
 2. 
 ```
-docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-run/docker-compose.yml down && sudo rm -rf /home/dev/projects/docker-yii2-app-advanced-rbac/mysql-data/* /home/dev/projects/docker-yii2-app-advanced-rbac/mysql-data-test/* && docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-run/docker-compose.yml up -d
+docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml down && sudo rm -rf /home/dev/projects/docker-yii2-app-advanced-redis/mysql-data/* /home/dev/projects/docker-yii2-app-advanced-redis/mysql-data-test/* && docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml up -d
 ```
 3. 
 ```
@@ -417,10 +417,10 @@ time -p docker exec -i dockerrun_mysql_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT
 также, для надёжности можно сохранить файлы баз до окончания переезда:
 1.5.
 ```
-sudo mv /home/dev/projects/docker-yii2-app-advanced-rbac/mysql-data /home/dev/projects/docker-yii2-app-advanced-rbac/mysql-data-test /home/dev/projects/docker-yii2-app-advanced-rbac/mysql-bak/
+sudo mv /home/dev/projects/docker-yii2-app-advanced-redis/mysql-data /home/dev/projects/docker-yii2-app-advanced-redis/mysql-data-test /home/dev/projects/docker-yii2-app-advanced-redis/mysql-bak/
 ``` 
 ```
-sudo cp -rf /home/dev/projects/docker-yii2-app-advanced-rbac/mysql-bak/* /home/dev/projects/docker-yii2-app-advanced-rbac
+sudo cp -rf /home/dev/projects/docker-yii2-app-advanced-redis/mysql-bak/* /home/dev/projects/docker-yii2-app-advanced-redis
 ```
 
 ### Применение 
@@ -449,8 +449,8 @@ ssh vpsserver-remoteuser "docker exec yii2advanced_db_1 sh -c 'exec mysqldump -u
 ## Скрипт с ротацией дампов
 
 ```
-touch /home/dev/projects/docker-yii2-app-advanced-rbac_mysql_dump
-chmod +x /home/dev/projects/docker-yii2-app-advanced-rbac_mysql_dump
+touch /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump
+chmod +x /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump
 ```
 Скрипт ротации для сервера.
 При запуске 2 раза в день и перезаписи после 30 дней
@@ -475,14 +475,14 @@ ls -lAh $BACKUP_DIR/1
 
 crontab -e 
 ```
-* 8,19 * * * /home/dev/projects/docker-yii2-app-advanced-rbac_mysql_dump
+* 8,19 * * * /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump
 ```
 
 ## Копирование созданных дампов на локальную машину
  
 ```
-touch /home/dev/projects/docker-yii2-app-advanced-rbac_mysql_dump_copy
-chmod +x /home/dev/projects/docker-yii2-app-advanced-rbac_mysql_dump_copy
+touch /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump_copy
+chmod +x /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump_copy
 ```
 Копирование с клиентской машины по расписанию через 15 минут после начала дампа.
 При запуске 2 раза в день и перезаписи после 30 дней
@@ -508,14 +508,14 @@ ls -lAh $BACKUP_DIR
 
 crontab -e 
 ```
-15 8,19 * * * /home/dev/projects/docker-yii2-app-advanced-rbac_mysql_dump_copy > /dev/null 2>&1
+15 8,19 * * * /home/dev/projects/docker-yii2-app-advanced-redis_mysql_dump_copy > /dev/null 2>&1
 ```
 
 
 # Автообновление кода по git pull
 ```
-touch /home/dev/projects/docker-yii2-app-advanced-rbac_git_pull
-chmod +x /home/dev/projects/docker-yii2-app-advanced-rbac_git_pull
+touch /home/dev/projects/docker-yii2-app-advanced-redis_git_pull
+chmod +x /home/dev/projects/docker-yii2-app-advanced-redis_git_pull
 ```
 Скрипт
 ```
@@ -523,9 +523,9 @@ chmod +x /home/dev/projects/docker-yii2-app-advanced-rbac_git_pull
 eval `ssh-agent -s`
 ssh-add ~/.ssh/id_dev_to_git
 echo "yii2advanced:docker"
-git --git-dir /home/dev/projects/docker-yii2-app-advanced-rbac/.git pull
+git --git-dir /home/dev/projects/docker-yii2-app-advanced-redis/.git pull
 echo "yii2advanced:php code"
-git --git-dir /home/dev/projects/docker-yii2-app-advanced-rbac/php-code/.git pull
+git --git-dir /home/dev/projects/docker-yii2-app-advanced-redis/php-code/.git pull
 ```
 
 > Обратите внимание: данный скрипт не выполняет миграции `./yii migrate/up` и установку пакетов `composer install`
@@ -535,7 +535,7 @@ git --git-dir /home/dev/projects/docker-yii2-app-advanced-rbac/php-code/.git pul
 
 crontab -e
 ```
-1-59/5 * * * * /home/dev/projects/docker-yii2-app-advanced-rbac_git_pull
+1-59/5 * * * * /home/dev/projects/docker-yii2-app-advanced-redis_git_pull
 ```
 
 Также стоит посмотреть в сторону сине-зелёного деплоя и [проекта "рой"](https://github.com/dmstr/docker-roj) 
@@ -646,7 +646,7 @@ server {
 
 После обновления структуры (если в миграциях не прописано очистки кеша) выполнить команду
 ```
-/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-run/docker-compose.yml run --rm php ./yii cache/flush-all
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml run --rm php ./yii cache/flush-all
 ```
 
 # Возможные проблемы [см. troubleshooting](./install-troubleshooting.md)

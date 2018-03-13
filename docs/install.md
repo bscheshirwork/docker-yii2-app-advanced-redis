@@ -57,7 +57,7 @@ composer update
 5.1.Выполнить миграции внутри контейнера
 
 ```sh
-/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-rbac/docker-compose.yml exec php ./yii migrate/up
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-compose.yml exec php ./yii migrate/up
 ```
 
 > Самое время создать дамп базы (например, такой метод использовался при создании используемого в тестах). При запущенном контейнере `dockerrun_db_1`
