@@ -646,7 +646,7 @@ server {
 
 После обновления структуры (если в миграциях не прописано очистки кеша) выполнить команду
 ```sh
-/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml run --rm php ./yii cache/flush-all
+/usr/local/bin/docker-compose -f /home/dev/projects/docker-yii2-app-advanced-redis/docker-run/docker-compose.yml exec php ./yii cache/flush-schema --interactive=0
 ```
 
 # Возможные проблемы [см. troubleshooting](./install-troubleshooting.md)
