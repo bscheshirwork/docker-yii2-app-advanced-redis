@@ -64,7 +64,7 @@ networks:
 ```
 
 Выполните
-```
+```sh
 docker-compose -f nginx-proxy/docker-compose.yml up -d 
 ```
 После старта основной композиции `docker-compose up -d`.

@@ -4,7 +4,7 @@
 Данная документация призвана прояснить и упростить установку и настройку модулей управления пользователями и ролями
 
 Вы можете выполнить установку готового шаблона на своё окружение с установленными и настроеными модулями с помощью команд
-```
+```sh
 composer create-project --prefer-dist bscheshirwork/yii2-app-advanced-rbac yii2-app-advanced-rbac
 ```
 и инициализации, аналогичной исходному [шаблону advanced](https://github.com/yiisoft/yii2-app-advanced/blob/master/docs/guide/README.md)

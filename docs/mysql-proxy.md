@@ -4,7 +4,7 @@ https://github.com/bscheshirwork/docker-mysql-proxy
 # Использование с docker-compose
 
 Без прокси (изначальное состояние)
-```
+```yml
 version: '2'
 
 services:
@@ -23,7 +23,7 @@ services:
 ```
 
 С добавлением прокси (замена имени сервиса базы)
-```
+```yml
 version: '2'
 
 services:
@@ -61,7 +61,7 @@ services:
 
 # Вывод в STDOUT
 Для `docker-compose up` без демонизации `-d` (`../mysql-proxy/main.lua`)
-```
+```lua
 function read_query(packet)
    if string.byte(packet) == proxy.COM_QUERY then
 	print(string.sub(packet, 2))
@@ -71,7 +71,7 @@ end
 
 # Логгирование запросов в файл 
 
-```
+```yml
 ...
     volumes:
       - ../mysql-proxy-conf:/opt/mysql-proxy/conf
@@ -86,7 +86,7 @@ end
 ```
 
 `/mysql-proxy-conf/log.lua` https://gist.github.com/simonw/1039751
-```
+```lua
 local log_file = os.getenv("LOG_FILE")
 
 local fh = io.open(log_file, "a+")
@@ -111,7 +111,7 @@ https://hub.docker.com/r/gediminaspuksmys/mysqlproxy/
 Образ может быть расширен для ротации логов с помощью `logrotate`
 Конфиг `/etc/logrotate.d/mysql-proxy` (приблизительно)
 
-```
+```conf
 /opt/mysql-proxy/mysql.log {
 	weekly
 	missingok
@@ -129,7 +129,7 @@ https://hub.docker.com/r/gediminaspuksmys/mysqlproxy/
 # Что плохого может случится?
 Если у вас не получается поднять цепочку `mysql` -> `mysql-proxy` -> `external клиент слушающий 0.0.0.0:3308`
 проверьте порты у сервиса `mysql` и явно добавьте `expose` этому сервису
-```
+```yml
     expose:
       - "3306" #for service mysql-proxy
 ```

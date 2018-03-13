@@ -48,7 +48,7 @@ user <span id="start-modules-user"></span>
 
 Конфигурация yii2-advanced-rbac/common/config/main.php
 
-```
+```php
     'modules' => [
         'user' => [
             'class' => 'dektrium\user\Module',
@@ -59,7 +59,7 @@ user <span id="start-modules-user"></span>
 Запрет доступа к профилю, восстановлению пароля, регистрации и настройкам своего аккаунта из бекенда: в
 `yii2-advanced-rbac/backend/config/main.php` добавить:
 
-```
+```php
     'modules' => [
         'user' => [
             // Отключить контроллеры profile, recovery, registration, settings. Остались security, admin
@@ -70,7 +70,7 @@ user <span id="start-modules-user"></span>
 
 Запрет администрирования с фронтенда: в `yii2-advanced-rbac/frontend/config/main.php` добавить:
 
-```
+```php
     'modules' => [
         'user' => [
             // Отключить контроллер admin. Остались profile, recovery, registration, security, settings.
@@ -91,7 +91,7 @@ rbac <span id="start-modules-rbac"></span>
 Конфигурация backend
 В примере указан стандартный фильтр доступа к модулю
 
-```
+```php
 'modules' => [
     'rbac' => [
         'class' => 'githubjeka\rbac\Module',
@@ -125,7 +125,7 @@ http://localhost/path/to/index.php?r=admin/assignment
 ```
 
 Конфигурация `@backend/config/main.php`
-```
+```php
     'modules' => [
         'admin' => [
             'class' => 'mdm\admin\Module',
@@ -137,7 +137,7 @@ http://localhost/path/to/index.php?r=admin/assignment
 Во время разработки может понадобится отключить проверку прав для некоторых путей.
 Этого можно достигнуть следующим конфигом (фильтр добавлен глобально):
 
-```
+```php
 'modules' => [...],
 ...
 //фильтр для приложения
