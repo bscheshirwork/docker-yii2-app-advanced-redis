@@ -299,12 +299,12 @@ session_start(): Cannot send session cache limiter - headers already sent (outpu
 
 Для трассировки скопируем также содержимое рабочей папки образа-помощника `PHPStorm` и укажем в карте
 ```
-phpstorm_helpers:PS-173.4548.32
+phpstorm_helpers:PS-173.4674.45
 ```
 Копируем, например, из запущеного контейнера, средствами `docker` 
 ```sh
 rm -Rf ~/projects/.phpstorm_helpers
-docker cp phpstorm_helpers_PS-173.4548.32:/opt/.phpstorm_helpers/ ~/projects/.phpstorm_helpers
+docker cp phpstorm_helpers_PS-173.4674.45:/opt/.phpstorm_helpers/ ~/projects/.phpstorm_helpers
 ```
 
 Реультатом поиска и отладки стал неутешительный вывод - реализация `codeception.php` На данный момент сломана.
@@ -352,7 +352,7 @@ class PhpStorm_Codeception_ReportPrinter extends PhpStorm_Codeception_ReportPrin
 (я говорю о тебе, Reflection в Codeception), можно в папке `.phpstorm_helpers` запустить билд образа.
 ```sh
 cd ~/projects/.phpstorm_helpers/
-docker build --no-cache --pull -t phpstorm_helpers:PS-173.4548.32 .
+docker build --no-cache --pull -t phpstorm_helpers:PS-173.4674.45 .
 ```
 
 Дальнейший запуск тестов пройдёт успешно. До следующего обновления.  
