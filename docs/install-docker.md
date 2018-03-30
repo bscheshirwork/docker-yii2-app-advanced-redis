@@ -71,7 +71,7 @@ $ sudo apt-get install docker-ce
 использовать последнюю версию. Далее перечислены доступные версии (сокращённо, вывод усечён до первой строки).
 ```sh
 $ apt-cache madison docker-ce
- docker-ce | 17.12.0~ce-0~ubuntu | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
+ docker-ce | 18.03.0~ce-0~ubuntu | https://download.docker.com/linux/ubuntu xenial/stable amd64 Packages
 ```
 Содержимое списка зависит от того, какие репозитории включены. Выберите конкретную версию для установки. 
 Второй столбец - строковое представление версии. Третий столбец - это имя репозитория, в котором указывается, 
@@ -167,7 +167,7 @@ $ sudo systemctl disable docker
 Перейдите на страницу проекта на [GitHub](https://github.com/docker/compose/releases)
 
 Следуйте инструкциям по установке в описании релиза. 
-Например, для версии 1.19.0-rc2 
+Например, для версии 1.20.1
 
 Перейти в консоль `root@host#`
 ```sh
@@ -175,7 +175,7 @@ sudo -i
 ```
 в ней выполнить команды
 ```sh
-curl -L https://github.com/docker/compose/releases/download/1.19.0-rc2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+curl -L https://github.com/docker/compose/releases/download/1.20.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 ```
 и выйти
@@ -187,7 +187,7 @@ exit
 ```sh
 $ docker-compose --version
 
-docker-compose version: 1.19.0-rc2
+docker-compose version: 1.20.1
 ```
 
 > Примечание: в конфигурации `cron`, `systemctl` и т.п. необходимо указываеть полные пути к исполнимому файлу, т.е. 
@@ -197,6 +197,7 @@ docker-compose version: 1.19.0-rc2
 
 Для обновления `Docker CE`, сначала обновите список пакетов `sudo apt-get update`, 
 затем следуйте инструкциям к версии той новой версии, которую вы хотите установить.
+> `sudo apt upgrade -y` достаточно для обновления `Docker CE` до последней доступной версии.
 
 # Удаление
 

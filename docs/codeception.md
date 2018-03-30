@@ -76,6 +76,28 @@ for i in frontend backend; do sudo rm php-code/$i/tests/_output/$i.tests.* php-c
 docker-compose -f docker-codeception-run/docker-compose.yml run --rm --entrypoint bash codecept
 ```
 
+## Обновление базы после добавления новых миграций
+
+1.Остановить композицию, удалить текущую базу
+```sh
+docker-compose -f ~/projects/docker-yii2-app-advanced-rbac/docker-codeception-run/docker-compose.yml down
+sudo rm -Rf ~/projects/docker-yii2-app-advanced-rbac/mysql-data-test/*
+```
+2.Запустить композицию, загрузить в вновьсозданную базу дамп
+```sh
+docker-compose -f ~/projects/docker-yii2-app-advanced-rbac/docker-codeception-run/docker-compose.yml up -d
+time -p docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --database=yii2advanced' < ~/projects/docker-yii2-app-advanced-rbac/php-code/common/tests/_data/dump.sql
+```
+3.Выполнить миграции. Не имеющие смысла в тетовом окружении и требующие зависимости других баз - разрешить внесением в дамп отметки о миграции
+с ручной корректировкой при необходимости.
+```sh
+docker-compose -f ~/projects/docker-yii2-app-advanced-rbac/docker-codeception-run/docker-compose.yml exec php ./yii migrate/up
+```
+4.Сохранить новый дамп, проверить, закоммитить/откатить.
+```sh
+docker exec dockercodeceptionrun_db_1 sh -c 'exec mysqldump yii2advanced -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/projects/docker-yii2-app-advanced-rbac/php-code/common/tests/_data/dump.sql
+```
+
 ## Покрытие кода тестами и c3.php
 
 ### Настройки для `acceptance` тестов
