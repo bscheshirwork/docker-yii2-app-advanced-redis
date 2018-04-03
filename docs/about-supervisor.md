@@ -22,7 +22,7 @@ Supervisor — монитор процессов для ОС Linux, он авт�
       - db
     environment:
       TZ: Europe/Moscow
-      XDEBUG_CONFIG: "remote_host=192.168.0.83 remote_port=9003 var_display_max_data=1024 var_display_max_depth=5"
+      XDEBUG_CONFIG: "remote_host=dev-Aspire-V3-772 remote_port=9003 var_display_max_data=1024 var_display_max_depth=5"
       PHP_IDE_CONFIG: "serverName=yii2advanced"
 ```
 
