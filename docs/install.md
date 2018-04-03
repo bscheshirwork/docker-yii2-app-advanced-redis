@@ -94,9 +94,14 @@ Creating dockerrun_nginx_1
 
 Сервис доступен по адресу `0.0.0.0:8080` - frontend, `0.0.0.0:8081` - backend
 
-Для работы с xdebug используются переменные среды.
+Для работы с xdebug используются переменные среды. Например, на машине разработчика имеется следующая dns запись 
+```
+cat /etc/hosts
+127.0.1.1	dev-Aspire-V3-772
+```
+
 ```yml
-XDEBUG_CONFIG: "remote_host=192.168.0.83 remote_port=9001"
+XDEBUG_CONFIG: "remote_host=dev-Aspire-V3-772 remote_port=9001"
 PHP_IDE_CONFIG: "serverName=docker-yii2-advanced-rbac"
 ```
 В PHPStorm настроить следующее:
