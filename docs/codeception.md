@@ -12,7 +12,8 @@
 
 Копируем, например, из запущеного контейнера, средствами `docker` 
 ```
-docker cp dockercodeceptionrun_codecept_run_1:/repo/ .codecept
+rm -Rf ~/projects/.codecept
+docker cp dockercodeceptionrun_codecept_run_1:/repo/ ~/projects/.codecept
 ```
 
 Для отладки тестов
@@ -80,22 +81,22 @@ docker-compose -f docker-codeception-run/docker-compose.yml run --rm --entrypoin
 
 1.Остановить композицию, удалить текущую базу
 ```sh
-docker-compose -f ~/projects/docker-yii2-app-advanced-rbac/docker-codeception-run/docker-compose.yml down
-sudo rm -Rf ~/projects/docker-yii2-app-advanced-rbac/mysql-data-test/*
+docker-compose -f ~/projects/crm/docker-codeception-run/docker-compose.yml down
+sudo rm -Rf ~/projects/crm/mysql-data-test/*
 ```
 2.Запустить композицию, загрузить в вновьсозданную базу дамп
 ```sh
-docker-compose -f ~/projects/docker-yii2-app-advanced-rbac/docker-codeception-run/docker-compose.yml up -d
-time -p docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --database=yii2advanced' < ~/projects/docker-yii2-app-advanced-rbac/php-code/common/tests/_data/dump.sql
+docker-compose -f ~/projects/crm/docker-codeception-run/docker-compose.yml up -d
+time -p docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --database=crm' < ~/projects/crm/php-code/common/tests/_data/dump.sql
 ```
 3.Выполнить миграции. Не имеющие смысла в тетовом окружении и требующие зависимости других баз - разрешить внесением в дамп отметки о миграции
 с ручной корректировкой при необходимости.
 ```sh
-docker-compose -f ~/projects/docker-yii2-app-advanced-rbac/docker-codeception-run/docker-compose.yml exec php ./yii migrate/up
+docker-compose -f ~/projects/crm/docker-codeception-run/docker-compose.yml exec php ./yii migrate/up
 ```
 4.Сохранить новый дамп, проверить, закоммитить/откатить.
 ```sh
-docker exec dockercodeceptionrun_db_1 sh -c 'exec mysqldump yii2advanced -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/projects/docker-yii2-app-advanced-rbac/php-code/common/tests/_data/dump.sql
+docker exec dockercodeceptionrun_db_1 sh -c 'exec mysqldump crm -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/projects/crm/php-code/common/tests/_data/dump.sql
 ```
 
 ## Покрытие кода тестами и c3.php
@@ -122,13 +123,14 @@ if (file_exists(__DIR__ . '/../../c3.php')) {
 
 При этом `c3.php` расположен в `php-code/` и общий для `frontend` и `backend` групп тестов.
 ```sh
-cd php_code
-wget https://raw.github.com/Codeception/c3/2.0/c3.php
-
+cd php-code/
+rm c3.php codecept.phar
+wget https://raw.githubusercontent.com/Codeception/c3/2.4.0/c3.php
 wget http://codeception.com/codecept.phar
 ```
+
 `codecept.phar` использован, дабы не плодить мусор в вендорах (чего хотелось, до последнего, избежать)
-это позоволяет не трогать `composer.json` в секции `require-dev`. Минус - ручное обновление. 
+это позоволяет не трогать `composer.json` в секции `require-dev`. Минус - ручное обновление и медленное обновление в источнике.
 
 > Можно заметить, что при сборе данных о покрытии с помощью `c3.php` используется Codeception из `codecept.phar` и 
 выполняется код внутри контейнера сервиса `php`. Который отличался от контейнера сервиса `codecept`
@@ -229,6 +231,8 @@ paths:
     log: console/runtime/logs
 ```
 
+> Зависимости шаблона `yii2-app-advanced` в части `require-dev` конфига `composer.json` вызывают конфликты версий `Codeception`
+
 ## Codeception и Docker-инструменты PHPStorm
 
 Вдохновившись [заметкой про использоване PHPUnit](https://blog.jetbrains.com/phpstorm/2016/11/docker-remote-interpreters/)  
@@ -293,6 +297,8 @@ paths:
 ### Отличия запуска в IDE от запуска в контейнере из командной строки
 
 Внимание! В этом разделе указаны текущие проблемы тестирования и заплатка.
+
+> Заплатка устарела с выходом `phpstorm_helpers:PS-181.4203.565`, файл был изменён до такой степени, что переопределять нечего.
 
 Всё отлично, казалось бы, и должно быть одинаково - но нет. Тесты, завершающиеся успехом при запуске контейнера `codecept` 
 из командной строки
