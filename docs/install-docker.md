@@ -167,7 +167,7 @@ $ sudo systemctl disable docker
 Перейдите на страницу проекта на [GitHub](https://github.com/docker/compose/releases)
 
 Следуйте инструкциям по установке в описании релиза. 
-Например, для версии 1.20.1
+Например, для версии 1.21.0
 
 Перейти в консоль `root@host#`
 ```sh
@@ -175,7 +175,7 @@ sudo -i
 ```
 в ней выполнить команды
 ```sh
-curl -L https://github.com/docker/compose/releases/download/1.20.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 ```
 и выйти
@@ -187,7 +187,7 @@ exit
 ```sh
 $ docker-compose --version
 
-docker-compose version: 1.20.1
+docker-compose version: 1.21.0
 ```
 
 > Примечание: в конфигурации `cron`, `systemctl` и т.п. необходимо указываеть полные пути к исполнимому файлу, т.е. 
