@@ -39,7 +39,7 @@ services:
     environment:
       TZ: Europe/Moscow
   nginx:
-    image: nginx:1.13.12-alpine
+    image: nginx:1.14.0-alpine
     restart: always
     ports:
       - "8080:8080"
