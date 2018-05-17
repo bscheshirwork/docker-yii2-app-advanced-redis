@@ -94,7 +94,14 @@ Creating dockerrun_nginx_1
 
 Сервис доступен по адресу `0.0.0.0:8080` - frontend, `0.0.0.0:8081` - backend
 
-Для работы с xdebug используются переменные среды. Например, на машине разработчика имеется следующая dns запись 
+Для работы с xdebug используются переменные среды. Например,
+`remote_host` может быть вашим IP адресом (вне docker network) или вашим DNS, если вы используете dns-server (например, локальный dns server или dns-server на вашем роутере. В последнем случае у вас может быть DNS совпадающее с именем машины). 
+Docker может использовать данные этого dns сервера внутри запущенного контейнера и, соответственно, найти нуный IP.
+
+> Для `mac OS` возможно использование специального служебного имени хоста `host.docker.internal`.
+
+
+
 ```
 cat /etc/hosts
 127.0.1.1	dev-Aspire-V3-772
@@ -111,3 +118,5 @@ PHP_IDE_CONFIG: "serverName=docker-yii2-advanced-rbac"
 `Settings > Languages & Frameworks > PHP > Servers: [Use path mapping => True, /home/user/yourprojectname/php-code => /var/www/html]`
 Изменить порт по умолчанию 9000 на используемый в настройках
 `Settings > Languages & Frameworks > PHP > Debug: [Debug port => 9001]`
+см. docker-run/docker-compose.yml#L13
+`remote_port=9001`
