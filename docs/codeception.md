@@ -13,7 +13,7 @@
 Копируем, например, из запущеного контейнера, средствами `docker` 
 ```
 rm -Rf ~/projects/.codecept
-docker cp dockercodeceptionrun_codecept_run_1:/repo/ ~/projects/.codecept
+docker cp docker-codeception-run_codecept_run_1:/repo/ ~/projects/.codecept
 ```
 
 Для отладки тестов
