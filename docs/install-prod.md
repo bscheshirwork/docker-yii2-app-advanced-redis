@@ -140,7 +140,7 @@ Enter file in which to save the key (/home/dev/.ssh/id_rsa): /home/dev/.ssh/id_d
 Пользователю `bitbacket`/`gitlab`, который назначен ботом (или группе, если не хватает слотов - обычному) вписать публичный ключ
 сгенерированной пары 
 ```sh
-cat /home/dev/.ssh/id_dev_to_git.pub
+cat ~/.ssh/id_dev_to_git.pub
 ```
 (`{avatar}->bitbucket settings->SSH keys`, `{avatar}->settings->SSH keys`)
 
@@ -155,7 +155,7 @@ echo "Host bitbucket
      HostName bitbucket.org
      User botuseroryourgroup
      IdentityFile ~/.ssh/id_dev_to_git
-" >> /home/dev/.ssh/config
+" >> ~/.ssh/config
 ```
 
 Проверка ssh доступа
@@ -207,13 +207,40 @@ remoteuser@vpsidhere:~$ ssh -Tv git@bitbucket.org
 ```
 
 Проверка закончилась успехом? Закрепим в автозагрузке. Добавляем в конец `.bashrc` (все три строчки, одинарные кавычки
-для `echo '' >> /home/dev/.bashrc`)
+для `echo '' >> ~/.bashrc`)
 ```sh
 echo '
 #!/bin/bash
 eval `ssh-agent -s`
 ssh-add ~/.ssh/id_dev_to_git
-' >> /home/dev/.bashrc
+' >> ~/.bashrc
+```
+
+> note: Проверьте запустится ли ваш `.bashrc` При запуске оболочки. Посмотрите поведение `cat ~/.profile` 
+```sh
+# ~/.profile: executed by the command interpreter for login shells.
+# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
+# if running bash
+if [ -n "$BASH_VERSION" ]; then
+    # include .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+    fi
+fi
+```
+Проверьте переменную `echo $BASH_VERSION` - вывод не должен возвращать пустое значение  
+Далее, соответствено, проверьте существование `~/.bash_profile` или `~/.bash_login` и, в случае существования добавьте в 
+`~/.bash_profile` либо в `~/.bash_login`
+аналогичные строки для запуска `.bashrc`
+```sh
+echo '
+if [ -n "$BASH_VERSION" ]; then
+    # include .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+    fi
+fi
+' >> ~/.bash_profile
 ```
 
 # Для VPS позволяющих запустить докер 
