@@ -211,7 +211,7 @@ remoteuser@vpsidhere:~$ ssh -Tv git@bitbucket.org
 ```sh
 echo '
 #!/bin/bash
-eval `ssh-agent -s`
+eval `ssh-agent -s` 1>/dev/null
 ssh-add ~/.ssh/id_dev_to_git
 ' >> ~/.bashrc
 ```
