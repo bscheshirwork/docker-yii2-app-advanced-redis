@@ -243,6 +243,8 @@ fi
 ' >> ~/.bash_profile
 ```
 
+Смысл в том, что `~/.bash_profile` читается при login, а `~/.bashrc` при интерактивном старте оболочки. 
+
 # Для VPS позволяющих запустить докер 
 
 6.Установить `Docker`, `docker-compose`, старый вариант [тут](https://www.8host.com/blog/ustanovka-i-ispolzovanie-docker-v-ubuntu-16-04/)
