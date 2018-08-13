@@ -26,7 +26,7 @@ services:
       XDEBUG_CONFIG: "remote_host=dev-Aspire-V3-772 remote_port=9003 var_display_max_data=1024 var_display_max_depth=5"
       PHP_IDE_CONFIG: "serverName=yii2advanced"
   redis:
-    image: redis:4.0.10-alpine
+    image: redis:4.0.11-alpine
     restart: always
     command: redis-server /etc/redis/conf.d/redis.conf --requirepass yii2advancedredis
     ports:
