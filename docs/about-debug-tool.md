@@ -60,9 +60,9 @@ if (!YII_ENV_TEST) {
         'allowedIPs' => ['*'],
         'traceLine' => function($options, $panel) {
             $filePath = $options['file'];
-            $filePath = str_replace(Yii::$app->basePath, 'file:///home/dev/projects/docker-yii2-app-advanced-rbac/php-code/backend', $filePath);
-            $filePath = str_replace(dirname(Yii::$app->basePath) . '/common' , 'file:///home/dev/projects/docker-yii2-app-advanced-rbac/php-code/common', $filePath);
-            $filePath = str_replace(Yii::$app->vendorPath, 'file:///home/dev/projects/docker-yii2-app-advanced-rbac/php-code/vendor', $filePath);
+            $filePath = str_replace(Yii::$app->basePath, 'file:///home/dev/projects/docker-yii2-app-advanced-redis/php-code/backend', $filePath);
+            $filePath = str_replace(dirname(Yii::$app->basePath) . '/common' , 'file:///home/dev/projects/docker-yii2-app-advanced-redis/php-code/common', $filePath);
+            $filePath = str_replace(Yii::$app->vendorPath, 'file:///home/dev/projects/docker-yii2-app-advanced-redis/php-code/vendor', $filePath);
             return strtr('<a href="phpstorm://open?url={file}&line={line}">{file}:{line}</a>', ['{file}' => $filePath]);
         },
     ];
