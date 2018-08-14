@@ -46,6 +46,29 @@ if (!YII_ENV_TEST) {
 
 Важно следить за разграничением разработки, тестов и продакшена.
 
+## Открытие ссылок в IDE.
+Для добавления возможности перейти на нужную строчку кода из профилировщика необходимо настроить это поведение согласно
+[инструкции](https://github.com/yiisoft/yii2-debug/blob/master/README.md#open-files-in-ide) (необходимо добавление протокола) 
+
+Итоговый конфиг будет отличаться для frontend/backend и содержать пути для карты соответствий.
+```php
+if (!YII_ENV_TEST) {
+    // configuration adjustments for 'dev' environment
+    $config['bootstrap'][] = 'debug';
+    $config['modules']['debug'] = [
+        'class' => 'yii\debug\Module',
+        'allowedIPs' => ['*'],
+        'traceLine' => function($options, $panel) {
+            $filePath = $options['file'];
+            $filePath = str_replace(Yii::$app->basePath, 'file:///home/dev/projects/docker-yii2-app-advanced-rbac/php-code/backend', $filePath);
+            $filePath = str_replace(dirname(Yii::$app->basePath) . '/common' , 'file:///home/dev/projects/docker-yii2-app-advanced-rbac/php-code/common', $filePath);
+            $filePath = str_replace(Yii::$app->vendorPath, 'file:///home/dev/projects/docker-yii2-app-advanced-rbac/php-code/vendor', $filePath);
+            return strtr('<a href="phpstorm://open?url={file}&line={line}">{file}:{line}</a>', ['{file}' => $filePath]);
+        },
+    ];
+}
+```
+
 
 ## selenium 
 Для доступа к приёмочным тестам из сервиса selenium необходимо изменить фильтры в точках входа тестов:
