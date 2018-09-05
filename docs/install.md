@@ -6,6 +6,18 @@
 
 1.Установить docker и docker-compose по ссылкам выше.
 
+1.1. Создать файл локальных настроек `.env`  
+`.env_example` - пример локальных настроек `docker-compose`. 
+Должен быть скопирован в `.env` для запуска в режиме разработки `docker-compose -f docker-run/docker-compose.yml up -d` 
+или тестов `docker-compose -f docker-codeception-run/docker-compose.yml up -d`. 
+Файл `.env` должен присутствовать в папке из которой выполняется команда `docker-compose`.
+```sh
+cp .env_example .env
+ln -s  ../.env ./docker-codeception-run/.env
+ln -s  ../.env ./docker-run/.env
+```
+
+
 2.Создать папку проекта 
 
 ```sh
