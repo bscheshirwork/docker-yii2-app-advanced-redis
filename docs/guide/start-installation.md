@@ -10,9 +10,8 @@
 Зависимость | Отвечает за
 --- | --- | ---
 [yiisoft/yii2-app-advanced](https://github.com/yiisoft/yii2-app-advanced) | шаблон advanced
-[dektrium/yii2-user](https://github.com/dektrium/yii2-user/) | управление пользователями
+[2amigos/yii2-usuario/yii2-user](https://github.com/2amigos/yii2-usuario/) | управление пользователями и управление RBAC
 [githubjeka/gui-rbac-yii2](https://github.com/githubjeka/gui-rbac-yii2) | графическое представление RBAC
-[mdmsoft/yii2-admin](https://github.com/mdmsoft/yii2-admin) | управление RBAC
 
 
 Установка шаблона advanced [yiisoft/yii2-app-advanced](https://github.com/yiisoft/yii2-app-advanced)
@@ -108,14 +107,14 @@ return [
 ```
 
 
-Установка модуля управления пользователями [dektrium/yii2-user](https://github.com/dektrium/yii2-user/)
+Установка модуля управления пользователями и RBAC [2amigos/yii2-usuario](https://github.com/2amigos/yii2-usuario/)
 -----------------------
 
 > Примечание: миграция будет приведена ниже
 
 Для добавления зависимости выполните из папки приложения
 ```sh
-composer require "dektrium/yii2-user:0.9.*@dev"
+composer require 2amigos/yii2-usuario:~1.0
 ```
 
 Добавьте в конфиги модуль `user`,
@@ -127,30 +126,7 @@ composer require "dektrium/yii2-user:0.9.*@dev"
 ```php
     'modules' => [
         'user' => [
-            'class' => 'dektrium\user\Module',
-        ],
-    ],
-```
-
-Запрет доступа к профилю, восстановлению пароля, регистрации и настройкам своего аккаунта из бекенда: в
-`yii2-advanced-rbac/backend/config/main.php` добавить:
-
-```php
-    'modules' => [
-        'user' => [
-            // Отключить контроллеры profile, recovery, registration, settings. Остались security, admin
-            'as backend' => 'dektrium\user\filters\BackendFilter',
-        ],
-    ],
-```
-
-Запрет администрирования с фронтенда: в `yii2-advanced-rbac/frontend/config/main.php` добавить:
-
-```php
-    'modules' => [
-        'user' => [
-            // Отключить контроллер admin. Остались profile, recovery, registration, security, settings.
-            'as frontend' => 'dektrium\user\filters\FrontendFilter',
+            'class' => Da\User\Module::class,
         ],
     ],
 ```
@@ -172,7 +148,7 @@ yii2-advanced-rbac/frontend/views/layouts/main.php
 ```
 
 Про использование модуля узнайте в соответствующем [разделе](start-modules.md) или в
-[официальной документации](https://github.com/dektrium/yii2-user/blob/master/docs/README.md)
+[официальной документации](https://github.com/2amigos/yii2-usuario/blob/master/docs/installation/available-actions.md)
 
 
 Установка модуля [githubjeka/gui-rbac-yii2](https://github.com/githubjeka/gui-rbac-yii2)
@@ -196,29 +172,6 @@ composer require "githubjeka/yii2-gui-rbac:*"
 [официальной документации](https://github.com/githubjeka/gui-rbac-yii2/blob/master/README.md)
 
 
-Установка модуля управления RBAC [mdmsoft/yii2-admin](https://github.com/mdmsoft/yii2-admin)
------------------------
-
-> Примечание: миграция будет приведена ниже
-
-Для добавления зависимости выполните из папки приложения
-```sh
-composer require "mdmsoft/yii2-admin:2.x-dev"
-```
-
-Добавьте в общий конфиг `yii2-advanced-rbac/common/config/main.php` модуль `admin`,
-```php
-'modules' => [
-    'admin' => [
-        'class' => 'mdm\admin\Module',
-    ]
-],
-```
-
-Про использование модуля узнайте в соответствующем [разделе](start-modules.md) или в
-[официальной документации](https://github.com/mdmsoft/yii2-admin/blob/master/README.md)
-
-
 Применение миграций, стартовое администрирование, установка разрешений на действия и контроллеры
 -----------------------
 
@@ -237,10 +190,11 @@ composer require "mdmsoft/yii2-admin:2.x-dev"
             'class' => 'yii\console\controllers\MigrateController',
             // Since version 2.0.12 an array can be specified for loading migrations from multiple sources.
             'migrationPath' => [
-                '@yii/rbac/migrations/',
-                '@dektrium/user/migrations',
-                '@mdm/admin/migrations',
                 '@app/migrations',
+                '@yii/rbac/migrations/',
+            ],
+            'migrationNamespaces' => [
+                'Da\User\Migration',
             ],
         ],
     ],
@@ -262,33 +216,16 @@ composer require "mdmsoft/yii2-admin:2.x-dev"
 
 Сделать это можно через конфиг, добавляя поведение либо к контролеру, либо к целевому модулю либо к приложению вообще
 
-```php
-    'modules' => [
-        'admin' => [
-            'class' => 'mdm\admin\Module',
-            'as access' => [
-                'class' => 'yii\filters\AccessControl',
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['administrateRbac'],
-                    ],
-                ],
-            ],
-        ],
-    ],
-```
-
 Для контроллеров модуля - используя карту контроллеров
 ```php
     'modules' => [
         'user' => [
-            'class' => 'dektrium\user\Module',
+            'class' => Da\User\Module::class,
             'controllerMap' => [
                 'admin' => [
-                    'class' => 'dektrium\user\controllers\AdminController',
+                    'class' => Da\User\Controller\AdminController::class,
                     'as access' => [
-                        'class' => 'yii\filters\AccessControl',
+                        'class' => yii\filters\AccessControl::class,
                         'rules' => [
                             [
                                 'allow' => true,

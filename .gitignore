@@ -23,6 +23,8 @@ Thumbs.db
 
 # redis data dir
 /redis-data
+# redis test data dir
+/redis-data-test
 
 # mysql data dir
 /mysql-data
