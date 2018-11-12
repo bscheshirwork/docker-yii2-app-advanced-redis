@@ -133,11 +133,11 @@ PHP_IDE_CONFIG: "serverName=docker-yii2-advanced-rbac"
 см. docker-run/docker-compose.yml#L13
 `remote_port=9001`
 
-# Upgrade to latest MySQL
+# Обновление к последней версии MySQL
 
-For existing projects with `MySQL 8.0.12`: 
+Для существующих проектов, использующих `MySQL 8.0.12` необходимо выолнить стандартный скрипт обновления: 
 ```sh
 docker-compose up -d
 docker-compose exec mysql mysql_upgrade -uroot -p
 ```
-https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-13.html
+Подробности в описании обновлений https://dev.mysql.com/doc/relnotes/mysql/8.0/en/news-8-0-13.html
