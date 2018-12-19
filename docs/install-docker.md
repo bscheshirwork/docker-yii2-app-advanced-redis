@@ -213,3 +213,43 @@ $ sudo rm -rf /var/lib/docker
 ```
 
 Все изменённые файлы настрек необходимо удалить вручную.
+
+# Скрипт для просмотра зависимотей
+
+В случаях, когда невозможно просто взять и удалить образ, поможет просмотр потомков. Расположите скрипт в папке `/usr/lockal/bin`
+и добавьте права на выполнения.
+```sh
+sudo gedit /usr/local/bin/docker-tree
+```
+```sh
+#!/bin/bash
+parent_short_id=$1
+parent_id=`docker inspect --format '{{.Id}}' $1`
+
+get_kids() {
+   local parent_id=$1
+   docker inspect --format='ID {{.Id}} PAR {{.Parent}}' $(docker images -a -q) | grep "PAR ${parent_id}" | sed -E "s/ID ([^ ]*) PAR ([^ ]*)/\1/g"
+}
+
+print_kids() {
+   local parent_id=$1
+   local prefix=$2
+   local tags=`docker inspect --format='{{.RepoTags}}' ${parent_id}`
+   echo "${prefix}${parent_id} ${tags}"
+
+   local children=`get_kids "${parent_id}"`
+
+   for c in $children;
+   do
+       print_kids "$c" "$prefix  "
+   done
+}
+
+print_kids "$parent_id" ""
+```
+
+```sh
+sudo chmod ugo+x /usr/local/bin/docker-tree
+```
+
+[@see](https://gist.github.com/mlinhard/d460b2a6b3f6cd4426e554da040c0658) 
