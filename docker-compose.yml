@@ -37,7 +37,7 @@ services:
     environment:
       TZ: Europe/Moscow
   nginx:
-    image: nginx:1.15.7-alpine
+    image: nginx:1.15.8-alpine
     restart: always
     expose:
       - "8080"
