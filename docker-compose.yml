@@ -12,7 +12,7 @@ services:
       TZ: Europe/Moscow
       XDEBUG_CONFIG: "remote_enable=Off remote_autostart=Off"
   php-supervisor: # for workers
-    image: bscheshir/php:7.3.3-fpm-alpine-4yii2-supervisor
+    image: bscheshir/php:7.3.5-fpm-alpine-4yii2-supervisor
     restart: always
     volumes:
       - ./php-code:/var/www/html #php-code
@@ -24,7 +24,7 @@ services:
       TZ: Europe/Moscow
       XDEBUG_CONFIG: "remote_enable=Off remote_autostart=Off"
   redis:
-    image: redis:5.0.3-alpine
+    image: redis:5.0.4-alpine
     restart: always
     command: redis-server /etc/redis/conf.d/redis.conf --requirepass yii2advancedredis
     ports:

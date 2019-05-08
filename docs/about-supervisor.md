@@ -12,7 +12,7 @@ Supervisor — монитор процессов для ОС Linux, он авт�
 `docker-run/docker-compose.yml`
 ```yml
   php-supervisor: # for workers
-    image: bscheshir/php:7.3.3-fpm-alpine-4yii2-supervisor-xdebug
+    image: bscheshir/php:7.3.5-fpm-alpine-4yii2-supervisor-xdebug
     restart: always
     volumes:
       - ../php-code:/var/www/html #php-code

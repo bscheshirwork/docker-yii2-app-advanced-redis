@@ -2,12 +2,12 @@
 
 Представлен оффициальным образом [redis](https://hub.docker.com/_/redis/)
 
-Используется основаный на `alpine`, с указанием тега последнией версии, например `redis:5.0.3-alpine`
+Используется основаный на `alpine`, с указанием тега последнией версии, например `redis:5.0.4-alpine`
 
 Конфиг в `docker-compose.yml` представлен одноимённым сервисом `redis`
 ```
   redis:
-    image: redis:5.0.3-alpine
+    image: redis:5.0.4-alpine
     command: redis-server /etc/redis/conf.d/redis.conf --requirepass yii2advancedredis
     ports:
       - "6379"
