@@ -13,7 +13,7 @@ services:
       XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT} var_display_max_data=1024 var_display_max_depth=5"
       PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME}"
   php-supervisor: # for workers
-    image: bscheshir/php:7.3.11-fpm-alpine-4yii2-supervisor-xdebug
+    image: bscheshir/php:7.3.12-fpm-alpine-4yii2-supervisor-xdebug
     restart: always
     volumes:
       - ../php-code:/var/www/html #php-code
@@ -26,7 +26,7 @@ services:
       XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT_SUPERVISOR} var_display_max_data=1024 var_display_max_depth=5"
       PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME}"
   redis:
-    image: redis:5.0.6-alpine
+    image: redis:5.0.7-alpine
     restart: always
     command: redis-server /etc/redis/conf.d/redis.conf --requirepass yii2advancedredis
     ports:
