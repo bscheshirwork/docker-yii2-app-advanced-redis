@@ -4,6 +4,7 @@ services:
     build: .
     depends_on:
       - db
+      - browser
     volumes:
       - php-code:/var/www/html #php-code must populate
       - ~/.composer/cache:/root/.composer/cache
