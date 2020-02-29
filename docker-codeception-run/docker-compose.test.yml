@@ -5,6 +5,7 @@ services:
     depends_on:
       - db
       - browser
+      - nginx
     volumes:
       - php-code:/var/www/html #php-code must populate
       - ~/.composer/cache:/root/.composer/cache
