@@ -14,8 +14,6 @@ services:
   nginx:
     image: nginx:1.17.8-alpine
     restart: always
-    depends_on:
-      - sut
     volumes:
       - php-code:/var/www/html:ro #php-code
       - ../nginx-conf-test:/etc/nginx/conf.d #nginx-conf
