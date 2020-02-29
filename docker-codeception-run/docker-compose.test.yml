@@ -1,25 +1,21 @@
-version: '2'
+version: '3.7'
 services:
-  php:
-    image: bscheshir/php:7.4.3-fpm-alpine-4yii2-xdebug
-    restart: always
-    volumes:
-      - ../php-code:/var/www/html #php-code
-      - ~/.composer/cache:/root/.composer/cache
+  sut:
+    build: .
     depends_on:
       - db
+    volumes:
+      - php-code:/var/www/html #php-code must populate
+      - ~/.composer/cache:/root/.composer/cache
     environment:
       TZ: Europe/Moscow
-      XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT} remote_enable=On var_display_max_data=1024 var_display_max_depth=5"
-      PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME}"
   nginx:
     image: nginx:1.17.8-alpine
     restart: always
     depends_on:
-      - php
-    volumes_from:
-      - php
+      - sut
     volumes:
+      - php-code:/var/www/html:ro #php-code
       - ../nginx-conf-test:/etc/nginx/conf.d #nginx-conf
       - ../nginx-logs:/var/log/nginx #nginx-logs
     networks:
@@ -45,17 +41,6 @@ services:
       MYSQL_DATABASE: yii2advanced
       MYSQL_USER: yii2advanced
       MYSQL_PASSWORD: yii2advanced
-  codecept:
-    image: bscheshir/codeception:php7.4.3-fpm-alpine-yii2
-    depends_on:
-      - nginx
-      - browser
-    volumes_from:
-      - php
-    environment:
-      TZ: Europe/Moscow
-      XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT_CODECEPTION} remote_enable=On"
-      PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME_CODECEPTION}"
   browser:
     image: selenium/standalone-chrome-debug:3.141.59
     volumes:
@@ -65,3 +50,5 @@ services:
       - '5900'
     environment:
       TZ: Europe/Moscow
+volumes:
+  php-code:
