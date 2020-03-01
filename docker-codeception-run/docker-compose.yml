@@ -1,7 +1,7 @@
-version: '2'
+version: '3.7'
 services:
   php:
-    image: bscheshir/php:7.4.2-fpm-alpine-4yii2-xdebug
+    image: bscheshir/php:7.4.3-fpm-alpine-4yii2-xdebug
     restart: always
     volumes:
       - ../php-code:/var/www/html #php-code
@@ -13,7 +13,7 @@ services:
       XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT} remote_enable=On var_display_max_data=1024 var_display_max_depth=5"
       PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME}"
   php-supervisor: # for workers
-    image: bscheshir/php:7.4.2-fpm-alpine-4yii2-supervisor-xdebug
+    image: bscheshir/php:7.4.3-fpm-alpine-4yii2-supervisor-xdebug
     restart: always
     volumes:
       - ../php-code:/var/www/html #php-code
@@ -43,16 +43,16 @@ services:
     restart: always
     depends_on:
       - php
-    volumes_from:
-      - php
     volumes:
+      - ../php-code:/var/www/html #php-code
       - ../nginx-conf-test:/etc/nginx/conf.d #nginx-conf
       - ../nginx-logs:/var/log/nginx #nginx-logs
     networks:
       default:
+      selenium-nginx:
         aliases:
-         - backend.dev
-         - frontend.dev
+         - backend.nginx
+         - frontend.nginx
     environment:
       TZ: Europe/Moscow
   db:
@@ -72,12 +72,15 @@ services:
       MYSQL_USER: yii2advanced
       MYSQL_PASSWORD: yii2advanced
   codecept:
-    image: bscheshir/codeception:php7.4.2-fpm-alpine-yii2
+    image: bscheshir/codeception:php7.4.3-fpm-alpine-yii2
     depends_on:
       - nginx
       - browser
-    volumes_from:
-      - php
+    volumes:
+      - ../php-code:/var/www/html #php-code
+    networks:
+      - default
+      - selenium-nginx
     environment:
       TZ: Europe/Moscow
       XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT_CODECEPTION} remote_enable=On"
@@ -86,8 +89,12 @@ services:
     image: selenium/standalone-chrome-debug:3.141.59
     volumes:
       - /dev/shm:/dev/shm # the docker run instance may use the default 64MB, that may not be enough in some cases
+    networks:
+      - selenium-nginx
     ports:
       - '4444'
       - '5900'
     environment:
       TZ: Europe/Moscow
+networks:
+  selenium-nginx:

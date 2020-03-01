@@ -1,30 +1,40 @@
-version: '2'
+version: '3.7'
 services:
+  sut:
+    build: .
+    depends_on:
+      - db
+      - browser
+      - nginx
+    volumes:
+      - php-code:/var/www/html #php-code must populate
+      - ~/.composer/cache:/root/.composer/cache
+    networks:
+      - default
+      - selenium-nginx
+    environment:
+      TZ: Europe/Moscow
   php:
     image: bscheshir/php:7.4.3-fpm-alpine-4yii2-xdebug
     restart: always
     volumes:
-      - ../php-code:/var/www/html #php-code
+      - php-code:/var/www/html #php-code
       - ~/.composer/cache:/root/.composer/cache
     depends_on:
       - db
     environment:
       TZ: Europe/Moscow
-      XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT} var_display_max_data=1024 var_display_max_depth=5"
-      PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME}"
   php-supervisor: # for workers
     image: bscheshir/php:7.4.3-fpm-alpine-4yii2-supervisor-xdebug
     restart: always
     volumes:
-      - ../php-code:/var/www/html #php-code
+      - php-code:/var/www/html #php-code
       - ../supervisor-conf:/etc/supervisor/conf.d
       - ../supervisor-logs:/var/log/supervisor
     depends_on:
       - db
     environment:
       TZ: Europe/Moscow
-      XDEBUG_CONFIG: "remote_host=${DEV_REMOTE_HOST} remote_port=${DEV_REMOTE_PORT_SUPERVISOR} var_display_max_data=1024 var_display_max_depth=5"
-      PHP_IDE_CONFIG: "serverName=${DEV_SERVER_NAME}"
   redis:
     image: redis:5.0.7-alpine
     restart: always
@@ -32,7 +42,7 @@ services:
     ports:
       - "6379"
     volumes:
-      - ../redis-data:/data
+      - ../redis-data-test:/data
       - ../redis-conf:/etc/redis/conf.d
     depends_on:
       - php-supervisor
@@ -41,53 +51,48 @@ services:
   nginx:
     image: nginx:1.17.8-alpine
     restart: always
-    ports:
-      - "8080:8080"
-      - "8081:8081"
     depends_on:
       - php
-    volumes_from:
-      - php
     volumes:
-      - ../nginx-conf:/etc/nginx/conf.d #nginx-conf
+      - php-code:/var/www/html:ro #php-code
+      - ../nginx-conf-test:/etc/nginx/conf.d #nginx-conf
       - ../nginx-logs:/var/log/nginx #nginx-logs
+    networks:
+      default:
+      selenium-nginx:
+        aliases:
+         - backend.nginx
+         - frontend.nginx
     environment:
       TZ: Europe/Moscow
-  mysql:
+  db:
     image: mysql:8.0.19
     entrypoint:
       - '/entrypoint.sh'
       - '--default-authentication-plugin=mysql_native_password' # https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_default_authentication_plugin
     restart: always
-    expose:
-      - "3306" #for service mysql-proxy
     ports:
-      - "3307:3306" #for external connection
+      - "33006:3306"
     volumes:
-      - ../mysql-data/db:/var/lib/mysql #mysql-data
+      - ../mysql-data-test/db:/var/lib/mysql #mysql-data
     environment:
       TZ: Europe/Moscow
       MYSQL_ROOT_PASSWORD: yii2advanced
       MYSQL_DATABASE: yii2advanced
       MYSQL_USER: yii2advanced
       MYSQL_PASSWORD: yii2advanced
-  db: #mysql-proxy
-    image: bscheshir/mysql-proxy:0.8.5
-    expose:
-      - "3306" #for service php
-    ports:
-      - "3308:3306" #for external connection
-    restart: always
+  browser:
+    image: selenium/standalone-chrome-debug:3.141.59
     volumes:
-      - ../mysql-proxy-conf:/opt/mysql-proxy/conf
-      - ../mysql-proxy-logs:/opt/mysql-proxy/logs
-    depends_on:
-      - mysql
+      - /dev/shm:/dev/shm # the docker run instance may use the default 64MB, that may not be enough in some cases
+    networks:
+      - selenium-nginx
+    ports:
+      - '4444'
+      - '5900'
     environment:
       TZ: Europe/Moscow
-      PROXY_DB_HOST:
-      PROXY_DB_PORT: 3306
-      REMOTE_DB_HOST: mysql
-      REMOTE_DB_PORT: 3306
-      LUA_SCRIPT: "/opt/mysql-proxy/conf/log.lua"
-      LOG_FILE: "/opt/mysql-proxy/logs/mysql.log"
+volumes:
+  php-code:
+networks:
+  selenium-nginx:
