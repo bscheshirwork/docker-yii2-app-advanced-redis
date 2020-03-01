@@ -14,6 +14,16 @@ services:
       - selenium-nginx
     environment:
       TZ: Europe/Moscow
+  php:
+    image: bscheshir/php:7.4.3-fpm-alpine-4yii2-xdebug
+    restart: always
+    volumes:
+      - php-code:/var/www/html #php-code
+      - ~/.composer/cache:/root/.composer/cache
+    depends_on:
+      - db
+    environment:
+      TZ: Europe/Moscow
   nginx:
     image: nginx:1.17.8-alpine
     restart: always

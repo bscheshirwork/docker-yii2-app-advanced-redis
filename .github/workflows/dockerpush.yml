@@ -27,8 +27,8 @@ jobs:
 
       - name: Run tests
         run: |
-          docker -v
-          docker-compose -v
+          echo docker -v
+          echo docker-compose -v
           docker-compose --file docker-codeception-run/docker-compose.test.yml build
           docker-compose --file docker-codeception-run/docker-compose.test.yml up -d
           docker-compose --file docker-codeception-run/docker-compose.test.yml ps
