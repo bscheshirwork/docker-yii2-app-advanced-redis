@@ -9,6 +9,9 @@ services:
     volumes:
       - php-code:/var/www/html #php-code must populate
       - ~/.composer/cache:/root/.composer/cache
+    networks:
+      - default
+      - selenium-nginx
     environment:
       TZ: Europe/Moscow
   nginx:
@@ -20,6 +23,7 @@ services:
       - ../nginx-logs:/var/log/nginx #nginx-logs
     networks:
       default:
+      selenium-nginx:
         aliases:
          - backend.nginx
          - frontend.nginx
@@ -45,6 +49,8 @@ services:
     image: selenium/standalone-chrome-debug:3.141.59
     volumes:
       - /dev/shm:/dev/shm # the docker run instance may use the default 64MB, that may not be enough in some cases
+    networks:
+      - selenium-nginx
     ports:
       - '4444'
       - '5900'
@@ -52,3 +58,5 @@ services:
       TZ: Europe/Moscow
 volumes:
   php-code:
+networks:
+  selenium-nginx:
