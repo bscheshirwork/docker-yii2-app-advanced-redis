@@ -49,8 +49,6 @@ services:
     restart: always
     ports:
       - "33006:3306"
-    volumes:
-      - ../mysql-data-test/db:/var/lib/mysql #mysql-data
     environment:
       TZ: Europe/Moscow
       MYSQL_ROOT_PASSWORD: yii2advanced
