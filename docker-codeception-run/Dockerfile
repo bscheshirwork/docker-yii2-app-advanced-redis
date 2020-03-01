@@ -8,7 +8,7 @@ RUN curl -L https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-
 RUN /bin/bash -c 'chmod +x /usr/local/bin/wait-for-it.sh'
 RUN ls -luha /usr/local/bin/wait-for-it.sh
 ENTRYPOINT ["/usr/local/bin/wait-for-it.sh", "db:3306", "--", "/usr/local/bin/wait-for-it.sh", "browser:4444", "--", "/usr/local/bin/wait-for-it.sh", "backend.nginx:80", "--", "/run_tests.sh"]
-RUN git clone https://github.com/bscheshirwork/yii2-app-advanced-rbac.git /var/www/html
+RUN git clone https://github.com/bscheshirwork/yii2-app-advanced-redis.git /var/www/html
 RUN composer install --no-dev
 # use --env=Development both with not use gii and debug modules
 RUN cp /var/www/html/environments/prod/console/config/main-local.php /var/www/html/environments/dev/console/config/main-local.php
