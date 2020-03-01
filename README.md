@@ -45,4 +45,4 @@ docker-yii2-advanced-redis, созданный в Docker-образоах окр
 
 All Rights Reserved.
 
-2018 © bscheshir.work@gmail.com
+2020 © bscheshir.work@gmail.com
