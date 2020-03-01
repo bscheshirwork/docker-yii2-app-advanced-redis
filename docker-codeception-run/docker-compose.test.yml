@@ -21,8 +21,8 @@ services:
     networks:
       default:
         aliases:
-         - backend.dev
-         - frontend.dev
+         - backend.nginx
+         - frontend.nginx
     environment:
       TZ: Europe/Moscow
   db:
