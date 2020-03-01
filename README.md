@@ -1,5 +1,7 @@
 Набор модулей администрирования пользователей и ролей на шаблоне yii2-advanced для запуска в Docker образах
 ===============================
+![Docker](https://github.com/bscheshirwork/docker-yii2-app-advanced-rbac/workflows/Docker/badge.svg?branch=master)
+
 Dockerized docker-yii2-advanced-rbac
 
 docker-yii2-advanced-rbac, созданный в Docker-образоах окружения. 
@@ -25,4 +27,4 @@ docker-yii2-advanced-rbac, созданный в Docker-образоах окр�
 
 All Rights Reserved.
 
-2018 © bscheshir.work@gmail.com
+2020 © bscheshir.work@gmail.com
