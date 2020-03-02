@@ -1,5 +1,7 @@
 # Набор для работы с `redis`
 
+![Docker](https://github.com/bscheshirwork/docker-yii2-app-advanced-redis/workflows/Docker/badge.svg?branch=master)
+
 Dockerized docker-yii2-advanced-redis
 
 docker-yii2-advanced-redis, созданный в Docker-образоах окружения. В различных комбинациях (как для удобства разработки 
