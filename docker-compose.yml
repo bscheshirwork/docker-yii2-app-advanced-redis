@@ -69,4 +69,4 @@ services:
       MYSQL_PASSWORD: yii2advanced
 networks:
   nginx-proxy:
-    external: # docker network create nginx-proxy
+    external: true # docker network create nginx-proxy
