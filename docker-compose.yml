@@ -1,4 +1,4 @@
-version: '2'
+version: '3.7'
 services:
   php:
     image: bscheshir/php:7.4.3-fpm-alpine-4yii2
@@ -39,19 +39,18 @@ services:
   nginx:
     image: nginx:1.17.8-alpine
     restart: always
-    expose:
-      - "8080"
-      - "8081"
-#    ports: # use nginx-proxy in same network (see ./docs/nginx-proxy.md)
-#      - "8080:8080"
-#      - "8081:8081"
     depends_on:
       - php
-    volumes_from:
-      - php
     volumes:
+      - ./php-code:/var/www/html #php-code
       - ./nginx-conf:/etc/nginx/conf.d #nginx-conf
       - ./nginx-logs:/var/log/nginx #nginx-logs
+    networks:
+      default:
+      nginx-proxy:
+        aliases:
+         - backend.nginx
+         - frontend.nginx
     environment:
       TZ: Europe/Moscow
   db:
@@ -68,3 +67,6 @@ services:
       MYSQL_DATABASE: yii2advanced
       MYSQL_USER: yii2advanced
       MYSQL_PASSWORD: yii2advanced
+networks:
+  nginx-proxy:
+    external: # docker network create nginx-proxy
