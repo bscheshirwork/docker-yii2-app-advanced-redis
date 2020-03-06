@@ -1,5 +1,5 @@
 [submodule "php-code"]
-	path = php-code
+	path = php-data
 	url = git@github.com:bscheshirwork/yii2-app-advanced-redis.git
 [submodule "docker-run/docker-php"]
 	path = docker-run/docker-php
