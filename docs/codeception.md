@@ -21,7 +21,7 @@ docker cp docker-codeception-run_codecept_run_1:/repo/ ~/projects/.codecept
 Добавить сервер с указанным в перемнной PHP_IDE_CONFIG именем
 `Settings > Languages & Frameworks > PHP > Servers: [Name => codeceptiom]`
 В нём изменить path mapping.
-`Settings > Languages & Frameworks > PHP > Servers: [Use path mapping => True, /home/user/yourprojectname/.codecept => /repo, /home/user/yourprojectname/php-code => /project]`
+`Settings > Languages & Frameworks > PHP > Servers: [Use path mapping => True, /home/user/yourprojectname/.codecept => /repo, /home/user/yourprojectname/php-data => /project]`
 Изменить порт по умолчанию 9000 на используемый в настройках
 `Settings > Languages & Frameworks > PHP > Debug: [Debug port => 9002]`
 
@@ -33,7 +33,7 @@ docker cp .codecept/src/Codeception/Module/Yii2.php dockercodeceptionrun_codecep
 
 ### Тонкая настройка окружения и точечные изменения
 Для возможности запуска `selenium` из той же сети, созданной `docker` - в созданных командой `init` локальных точках входа тестов 
- `php-code/backend/web/index-test.php`, `php-code/frontend/web/index-test.php` нужно изменить проверку `IP`
+ `php-data/backend/web/index-test.php`, `php-data/frontend/web/index-test.php` нужно изменить проверку `IP`
 ```
 //check if not in same subnet /16 (255.255.0.0)
 if ((ip2long(@$_SERVER['REMOTE_ADDR']) ^ ip2long(@$_SERVER['SERVER_ADDR'])) >= 2 ** 16) {
@@ -56,7 +56,7 @@ if ((ip2long(@$_SERVER['REMOTE_ADDR']) ^ ip2long(@$_SERVER['SERVER_ADDR'])) >= 2
 ```
 
 Для тестирования отправки почты необходимы права на запись в `/var/www/html/[backend|frontend]/runtime/mail/` из контейнера.
-Т.е `chmod o+rwx ./php-code/backend/runtime/mail`, `chmod o+rwx ./php-code/frontend/runtime/mail`
+Т.е `chmod o+rwx ./php-data/backend/runtime/mail`, `chmod o+rwx ./php-data/frontend/runtime/mail`
 
 Важен порядок подключения модулей `Codeception`: `DbYii2Config` c `populate/cleanup` ранее `Yii2`
 ```yml
@@ -69,7 +69,7 @@ if ((ip2long(@$_SERVER['REMOTE_ADDR']) ^ ip2long(@$_SERVER['SERVER_ADDR'])) >= 2
 
 Для детального анализа можно почистить директории вывода перед запуском
 ```
-for i in frontend backend; do sudo rm php-code/$i/tests/_output/$i.tests.* php-code/$i/tests/_output/debug/* php-code/$i/tests/_output/failed; done
+for i in frontend backend; do sudo rm php-data/$i/tests/_output/$i.tests.* php-data/$i/tests/_output/debug/* php-data/$i/tests/_output/failed; done
 ```
 
 ## Запуск оболочки в контейнере Codeception
@@ -87,7 +87,7 @@ sudo rm -Rf ~/projects/crm/mysql-data-test/*
 2.Запустить композицию, загрузить в вновьсозданную базу дамп
 ```sh
 docker-compose -f ~/projects/crm/docker-codeception-run/docker-compose.yml up -d
-time -p docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --database=crm' < ~/projects/crm/php-code/common/tests/_data/dump.sql
+time -p docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" --database=crm' < ~/projects/crm/php-data/common/tests/_data/dump.sql
 ```
 3.Выполнить миграции. Не имеющие смысла в тетовом окружении и требующие зависимости других баз - разрешить внесением в дамп отметки о миграции
 с ручной корректировкой при необходимости.
@@ -96,7 +96,7 @@ docker-compose -f ~/projects/crm/docker-codeception-run/docker-compose.yml exec 
 ```
 4.Сохранить новый дамп, проверить, закоммитить/откатить.
 ```sh
-docker exec dockercodeceptionrun_db_1 sh -c 'exec mysqldump crm -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/projects/crm/php-code/common/tests/_data/dump.sql
+docker exec dockercodeceptionrun_db_1 sh -c 'exec mysqldump crm -uroot -p"$MYSQL_ROOT_PASSWORD" 2>/dev/null'>~/projects/crm/php-data/common/tests/_data/dump.sql
 ```
 
 ## Покрытие кода тестами и c3.php
@@ -108,7 +108,7 @@ docker exec dockercodeceptionrun_db_1 sh -c 'exec mysqldump crm -uroot -p"$MYSQL
 Остальные типы тестов позволяют использовать проверку покрытия не устанавливая зависимость в `composer.json` кода,
 оставляя всю работу с тестами в контейнере сервиса тестов `codecept`
 
-Точка входа для тестов `php-code/backend|frontend/web/index-test.php` должна быть дополнена `c3.php` для определения покрытия при работе с 
+Точка входа для тестов `php-data/backend|frontend/web/index-test.php` должна быть дополнена `c3.php` для определения покрытия при работе с 
 различными контейнерами для кода и для веб-сервера
 ```php
 // Codeception testing routes
@@ -121,9 +121,9 @@ if (file_exists(__DIR__ . '/../../c3.php')) {
 }
 ```
 
-При этом `c3.php` расположен в `php-code/` и общий для `frontend` и `backend` групп тестов.
+При этом `c3.php` расположен в `php-data/` и общий для `frontend` и `backend` групп тестов.
 ```sh
-cd php-code/
+cd php-data/
 rm c3.php codecept.phar
 wget https://raw.githubusercontent.com/Codeception/c3/2.4.0/c3.php
 wget http://codeception.com/codecept.phar
@@ -134,7 +134,7 @@ wget http://codeception.com/codecept.phar
 
 > Можно заметить, что при сборе данных о покрытии с помощью `c3.php` используется Codeception из `codecept.phar` и 
 выполняется код внутри контейнера сервиса `php`. Который отличался от контейнера сервиса `codecept`
-"точкой монтирования" `php-code`.
+"точкой монтирования" `php-data`.
 Это не позволяло Codeception смешать результаты покрытия: например, из `/var/www/html/frontend/models/ContactForm.php` 
 и `/project/frontend/models/ContactForm.php` брался только существующий в `codecept` путь `/project/...`
 Установка `workdir` сервиса `codecept` в `/var/www/html/` решило проблему.
@@ -143,11 +143,11 @@ wget http://codeception.com/codecept.phar
 
 Необходим полный доступ к папкам отчётов. Задайте его, если возникают соответствующие проблемы.
 ```sh
-sudo chmod -R go+rw php-code/frontend/tests/_output php-code/backend/tests/_output php-code/common/tests/_output
+sudo chmod -R go+rw php-data/frontend/tests/_output php-data/backend/tests/_output php-data/common/tests/_output
 ```
 
 Настройки групп тестов отличаются портом
-`php-code/backend/tests/acceptance.suite.yml`
+`php-data/backend/tests/acceptance.suite.yml`
 ```yml
         - WebDriver:
             url: http://nginx:8081/
@@ -155,7 +155,7 @@ sudo chmod -R go+rw php-code/frontend/tests/_output php-code/backend/tests/_outp
             port: 4444
             browser: chrome
 ```
-`php-code/frontend/tests/acceptance.suite.yml`
+`php-data/frontend/tests/acceptance.suite.yml`
 ```yml
         - WebDriver:
             url: http://nginx:8080/
@@ -167,7 +167,7 @@ sudo chmod -R go+rw php-code/frontend/tests/_output php-code/backend/tests/_outp
 
 ### Общие настройки
 
-Настройки `php-code/codeception.yml` дополняются слеюующим
+Настройки `php-data/codeception.yml` дополняются слеюующим
 ```yml
 coverage:
     enabled: true
@@ -178,13 +178,13 @@ coverage:
 **Обязательно** необходимы огранчения покрытия
 **Обязательно** необходимы указания "удалённых" конфигов 
 
-`php-code/backend/codeception.yml`
+`php-data/backend/codeception.yml`
 дополнятся следующим
 ```yml
 coverage:
     # from nginx-conf-test/nginx.conf
     c3_url: http://nginx:8081/index-test.php
-    # redefine `php-code/codeception.yml` for `c3.php`. Relative to `c3.php` dir:
+    # redefine `php-data/codeception.yml` for `c3.php`. Relative to `c3.php` dir:
     remote_config: backend/codeception.yml
     enabled: true
     include:
@@ -199,13 +199,13 @@ coverage:
         - tests/*
 ```
 
-`php-code/frontend/codeception.yml`
+`php-data/frontend/codeception.yml`
 дополнятся следующим
 ```yml
 coverage:
     # from nginx-conf-test/nginx.conf
     c3_url: http://nginx:8080/index-test.php
-    # redefine `php-code/codeception.yml` for `c3.php`. Relative to `c3.php` dir:
+    # redefine `php-data/codeception.yml` for `c3.php`. Relative to `c3.php` dir:
     remote_config: frontend/codeception.yml
     enabled: true
     include:
@@ -288,7 +288,7 @@ paths:
 контейнер. Останов первой строки происходит на скрипте `codeception.php`
 
 6. Дополнительно можно создать отдельные конфигурации для запуска наборов тестов по отдельности, в 3м пункте выбрав
-соответствующий файл для `frontend`: `php-code/frontend/codeception.yml`. Также строчой ниже, в опциях, можно указать
+соответствующий файл для `frontend`: `php-data/frontend/codeception.yml`. Также строчой ниже, в опциях, можно указать
 набор тестов, например `functional`.  
 ![default](https://user-images.githubusercontent.com/5769211/30154418-7fa1eba4-93c2-11e7-9ff6-f1259096741b.png)  
 Для остальных вариантов настройки аналогичны.

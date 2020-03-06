@@ -1,4 +1,4 @@
-[submodule "php-code"]
+[submodule "php-data"]
 	path = php-data
 	url = git@github.com:bscheshirwork/yii2-app-advanced-rbac.git
 [submodule "docker-run/docker-php"]

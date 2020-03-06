@@ -4,7 +4,7 @@ services:
     image: bscheshir/php:7.4.3-fpm-alpine-4yii2-xdebug
     restart: always
     volumes:
-      - ../php-code:/var/www/html #php-code
+      - ../php-data:/var/www/html #php-data
       - ~/.composer/cache:/root/.composer/cache
     depends_on:
       - db
@@ -18,7 +18,7 @@ services:
     depends_on:
       - php
     volumes:
-      - ../php-code:/var/www/html #php-code
+      - ../php-data:/var/www/html #php-data
       - ../nginx-conf-test:/etc/nginx/conf.d #nginx-conf
       - ../nginx-logs:/var/log/nginx #nginx-logs
     networks:
@@ -51,7 +51,7 @@ services:
       - nginx
       - browser
     volumes:
-      - ../php-code:/var/www/html #php-code
+      - ../php-data:/var/www/html #php-data
     networks:
       - default
       - selenium-nginx

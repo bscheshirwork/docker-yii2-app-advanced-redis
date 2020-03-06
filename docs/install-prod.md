@@ -273,11 +273,11 @@ sudo ln -sF /home/dev/projects/docker-yii2-app-advanced-rbac /yii2advanced
 ```
 
 Кроме клонирования репозитория с докер-композицией необходимо инициализировать `git submodule`
-в папке `php-code` и переключить его на `master`. 
+в папке `php-data` и переключить его на `master`. 
 ```sh
 cd /home/dev/projects/docker-yii2-app-advanced-rbac
-git submodule update --init --recursive --remote php-code
-cd /home/dev/projects/docker-yii2-app-advanced-rbac/php-code
+git submodule update --init --recursive --remote php-data
+cd /home/dev/projects/docker-yii2-app-advanced-rbac/php-data
 git checkout master 
 ```
 
@@ -340,19 +340,19 @@ usage: scp [-12346BCpqrv] [-c cipher] [-F ssh_config] [-i identity_file]
 
 Таким образом также можно получить сгенерированные конфиги для дальнейшего исправления (выполнить на клиенте)
 ```sh
-for i in backend common console frontend; do for j in main-local.php params-local.php; do mkdir -p /home/dev/projects/docker-yii2-app-advanced-rbac_config/php-code/$i/config; cp -p /home/dev/projects/docker-yii2-app-advanced-rbac/php-code/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-rbac_config/php-code/$i/config/$j; done; done;
+for i in backend common console frontend; do for j in main-local.php params-local.php; do mkdir -p /home/dev/projects/docker-yii2-app-advanced-rbac_config/php-data/$i/config; cp -p /home/dev/projects/docker-yii2-app-advanced-rbac/php-data/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-rbac_config/php-data/$i/config/$j; done; done;
 ```
 Необходимо указать настройки почты, настройки подключения к базе.
 
 После исправления можно использовать для следующих установок/восстановления
 После проверки настроек для `production`, можно применить их, скопировав на сервер
 ```sh
-for i in backend common console frontend; do for j in "main-local.php" "params-local.php"; do scp /home/dev/projects/docker-yii2-app-advanced-rbac/php-code/$i/config/$j dev@host:/home/dev/projects/docker-yii2-app-advanced-rbac/php-code/$i/config/$j; done; done
+for i in backend common console frontend; do for j in "main-local.php" "params-local.php"; do scp /home/dev/projects/docker-yii2-app-advanced-rbac/php-data/$i/config/$j dev@host:/home/dev/projects/docker-yii2-app-advanced-rbac/php-data/$i/config/$j; done; done
 ```
 
 Восстановление (настроек "как на сервере"), соответственно, обратное
 ```sh
-for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do sudo cp -p /home/dev/projects/docker-yii2-app-advanced-rbac_config/php-code/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-rbac/php-code/$i/config/$j; done; done;
+for i in backend common console frontend; do for j in main-local.php params-local.php test-local.php; do sudo cp -p /home/dev/projects/docker-yii2-app-advanced-rbac_config/php-data/$i/config/$j /home/dev/projects/docker-yii2-app-advanced-rbac/php-data/$i/config/$j; done; done;
 ```
 
 12.Выполнить миграции внутри контейнера / загрузить `dump`.
@@ -554,7 +554,7 @@ ssh-add ~/.ssh/id_dev_to_git
 echo "yii2advanced:docker"
 git --git-dir /home/dev/projects/docker-yii2-app-advanced-rbac/.git pull
 echo "yii2advanced:php code"
-git --git-dir /home/dev/projects/docker-yii2-app-advanced-rbac/php-code/.git pull
+git --git-dir /home/dev/projects/docker-yii2-app-advanced-rbac/php-data/.git pull
 ```
 
 > Обратите внимание: данный скрипт не выполняет миграции `./yii migrate/up` и установку пакетов `composer install`
