@@ -20,14 +20,14 @@ url = https://github.com/bscheshirwork/docker-yii2-app-advanced-rbac.git
 |     url = https://github.com/bscheshirwork/docker-php.git
 |
 |---- yii2-app-advanced-redis
-      path = php-code
+      path = php-data
       url = https://github.com/bscheshirwork/yii2-app-advanced-rbac.git
 ```
 
 
 ## Предки
 
-Соответствущие цепочки для окружения приложения `docker` и подмодуля с кодом приложения `php-code`
+Соответствущие цепочки для окружения приложения `docker` и подмодуля с кодом приложения `php-data`
 
 ```
 docker-yii2-app-advanced-redis
@@ -53,17 +53,17 @@ url = https://github.com/yiisoft/yii2-app-advanced.git
 
 ### Обновление
 
-Важно помнить, что без соответствующего опубликованого коммита в подмодуле `php-code` репозиторий `docker-...`
+Важно помнить, что без соответствующего опубликованого коммита в подмодуле `php-data` репозиторий `docker-...`
 будет ссылатся на несуществующие данные.  
-С другой стороны при публикации подмодуля `php-code` без публикации `docker-...` с соответствующим коммитом 
+С другой стороны при публикации подмодуля `php-data` без публикации `docker-...` с соответствующим коммитом 
 при клонировании репозитория с подмодулями даст устаревшие данные
 Конечно, раздельный `git pull` даёт актуальную информацию, но указывать будет не на конечный коммит.
 
 Таким образом, необходимо актуализировать оба репозитория, см.псевдокод. 
-`php-code`: `git commit; git push bitbucket`, `docker`: `git add php-code; git commit; git push bitbucket`
+`php-data`: `git commit; git push bitbucket`, `docker`: `git add php-data; git commit; git push bitbucket`
 
 Раздельный `git pull` даёт актуальную информацию
-`php-code`: `git pull origin`, `docker`: `git pull origin`
+`php-data`: `git pull origin`, `docker`: `git pull origin`
 
 ## Актуализация
 
@@ -79,7 +79,7 @@ cd ../..
 cd ./docker-codeception-run/docker-codeception-yii2
 git pull origin master
 cd ../..
-cd ./php-code
+cd ./php-data
 git pull parent master
 cd ..
 sed -i -e 's/\(php:\?\)7.2.5/\17.2.8/;s/nginx:1.13.11/nginx:1.13.12/' ./docker-compose.yml ./docker-run/docker-compose.yml ./docker-codeception-run/docker-compose.yml
@@ -96,7 +96,7 @@ cd ../..
 cd ./docker-codeception-run/docker-codeception-yii2
 git pull origin master
 cd ../..
-cd ./php-code
+cd ./php-data
 git pull parent master
 cd ..
 git pull parent master

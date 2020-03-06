@@ -24,7 +24,7 @@
 
 Настройки доступа по IP, соответственно, ослаблены
 
-`php-code/frontend/config/main-local.php`, `php-code/backend/config/main-local.php`
+`php-data/frontend/config/main-local.php`, `php-data/backend/config/main-local.php`
 ```php
 if (!YII_ENV_TEST) {
     // configuration adjustments for 'dev' environment
@@ -60,9 +60,9 @@ if (!YII_ENV_TEST) {
         'allowedIPs' => ['*'],
         'traceLine' => function($options, $panel) {
             $filePath = $options['file'];
-            $filePath = str_replace(Yii::$app->basePath, 'file:///home/dev/projects/docker-yii2-app-advanced-redis/php-code/backend', $filePath);
-            $filePath = str_replace(dirname(Yii::$app->basePath) . '/common' , 'file:///home/dev/projects/docker-yii2-app-advanced-redis/php-code/common', $filePath);
-            $filePath = str_replace(Yii::$app->vendorPath, 'file:///home/dev/projects/docker-yii2-app-advanced-redis/php-code/vendor', $filePath);
+            $filePath = str_replace(Yii::$app->basePath, 'file:///home/dev/projects/docker-yii2-app-advanced-redis/php-data/backend', $filePath);
+            $filePath = str_replace(dirname(Yii::$app->basePath) . '/common' , 'file:///home/dev/projects/docker-yii2-app-advanced-redis/php-data/common', $filePath);
+            $filePath = str_replace(Yii::$app->vendorPath, 'file:///home/dev/projects/docker-yii2-app-advanced-redis/php-data/vendor', $filePath);
             return strtr('<a href="phpstorm://open?url={file}&line={line}">{file}:{line}</a>', ['{file}' => $filePath]);
         },
     ];
@@ -72,7 +72,7 @@ if (!YII_ENV_TEST) {
 
 ## selenium 
 Для доступа к приёмочным тестам из сервиса selenium необходимо изменить фильтры в точках входа тестов:
-`php-code/frontend/web/index-test.php` `php-code/backend/web/index-test.php`
+`php-data/frontend/web/index-test.php` `php-data/backend/web/index-test.php`
 Доступ бует требоватся от сервиса в той же сети, не от шлюза
 ```php
 //check if not in same subnet /16 (255.255.0.0)

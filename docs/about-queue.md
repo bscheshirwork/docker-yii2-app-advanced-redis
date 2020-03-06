@@ -3,7 +3,7 @@
 Используется [yiisoft/yii2-queue](https://github.com/yiisoft/yii2-queue) в связке с [redis](https://hub.docker.com/_/redis/) через [yiisoft/yii2-redis](https://github.com/yiisoft/yii2-redis)
 
 Конфиг очередей размещён в основном конфиге общей части приложений, 
-`php-code/common/config/main.php`
+`php-data/common/config/main.php`
 ```
 return [
     //....
@@ -22,7 +22,7 @@ return [
 ```
 
 автозагрузка консольных команд - соответственно в основном конфиге консольного приложения.
-`php-code/console/config/main.php`
+`php-data/console/config/main.php`
 ```
 return [
     //....
@@ -42,7 +42,7 @@ return [
 контейнере, консольными командами. Соответственно, большая часть настроек приходится на конфиг консольного, соответственно, приложения.
 
 В простейшем случае воркеры обрабатывают задания, представленные в этом же проекте.  
-Например, `php-code/common/components/queue/DownloadJob.php`
+Например, `php-data/common/components/queue/DownloadJob.php`
 ```
 <?php
 

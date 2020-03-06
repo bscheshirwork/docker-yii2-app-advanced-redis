@@ -63,7 +63,7 @@ composer update -vv
 ./init
 ``` 
 что создаст настройки и скрипт `yii` для следующего шага. Настройки базы уже установлены для окружения, 
-их согласно вашим нуждам можно изменить(`docker-codeception-run/docker-compose.yml`, `docker-run/docker-compose.yml`, `php-code/common/config/main.php` - требуется root).
+их согласно вашим нуждам можно изменить(`docker-codeception-run/docker-compose.yml`, `docker-run/docker-compose.yml`, `php-data/common/config/main.php` - требуется root).
 > Внимание! Возникла ошибка доступа? При изменении настроек базы после её первого запуска не забываем останавливать композицию `docker-compose down` и чистить файлы базы `sudo rm -rf ../mysql-data/*`; Возникла ошибка `SQLSTATE[HY000] [2002] Connection refused` - база не успела поднятся. 
 
 5.1.Выполнить миграции внутри контейнера
@@ -75,11 +75,11 @@ composer update -vv
 > Самое время создать дамп базы (например, такой метод использовался при создании используемого в тестах). При запущенном контейнере `dockerrun_db_1`
 либо `dockercodeceptionrun_db_run_1` используем согласно [документации в описании образа](https://hub.docker.com/_/mysql/)
 ```sh
-docker exec dockerrun_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' > php-code/common/tests/_data/dump.sql
+docker exec dockerrun_db_1 sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' > php-data/common/tests/_data/dump.sql
 ```
 При восстановлении необходимо добавить ключ `-i` для перенаправления ввода.
 ```sh
-docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < php-code/common/tests/_data/dump.sql
+docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" yii2advanced' < php-data/common/tests/_data/dump.sql
 ```
 
 5.2.При выполнении последней мигации вы проведёте инициализацию rbac [см. общая инструкция установки шаблона](./guide/start-installation.md). **Первый пользователь получит права администратора**.
@@ -90,7 +90,7 @@ docker exec -i dockercodeceptionrun_db_1 sh -c 'exec mysql -uroot -p"$MYSQL_ROOT
 ```
 > В случае ошибки на этапе создания первого пользователя права не будут выданы. Верните базу в первоначальный вид и попробуйте снова.
 
-> email можно прочесть в папке php-code/console/runtime/mail
+> email можно прочесть в папке php-data/console/runtime/mail
 
 > Примечание: Для отправки почты (сообщение о регистрации, восстановление пароля, подтверждение ночты в модуле пользователей)
 необходимо настроить отправку почты, согласно соответствующему пункту [инструкции](./guide/start-installation.md)
@@ -127,7 +127,7 @@ PHP_IDE_CONFIG: "serverName=docker-yii2-advanced-rbac"
 Добавить сервер с указанным в перемнной PHP_IDE_CONFIG именем
 `Settings > Languages & Frameworks > PHP > Servers: [Name => docker-yii2-advanced-rbac]`
 В нём изменить path mapping.
-`Settings > Languages & Frameworks > PHP > Servers: [Use path mapping => True, /home/user/yourprojectname/php-code => /var/www/html]`
+`Settings > Languages & Frameworks > PHP > Servers: [Use path mapping => True, /home/user/yourprojectname/php-data => /var/www/html]`
 Изменить порт по умолчанию 9000 на используемый в настройках
 `Settings > Languages & Frameworks > PHP > Debug: [Debug port => 9001]`
 см. docker-run/docker-compose.yml#L13
